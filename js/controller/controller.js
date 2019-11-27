@@ -7,8 +7,8 @@ const Controller = function() {
   this.up = new Controller.ButtonInput();
 
   this.onKeyEvent = function(type, keyCode) {
-    let down = event.type === "keydown";
-    switch(event.keyCode) {
+    let down = type === "keydown";
+    switch(keyCode) {
       case 37:
         this.left.handleInput(down);
         break;

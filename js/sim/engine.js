@@ -1,55 +1,54 @@
-const Engine = function(dt, update, render) {
+const Engine = function(dt, onTick, render) {
 
-  this.elapsed = 0;
-  this.animationFrameRequest = undefined;
-  this.time = undefined;
-  this.dt = dt;
-  this.updated = false;
-  this.update = update;
-  this.render = render;
-  
-  this.tick = function(timeStamp) {
-    this.elapsed += timeStamp - this.time;
-    this.time = timeStamp;
+  let _elapsed = 0;
+  let _animationFrameRequest = undefined;
+  let _time = undefined;
+  let _dt = dt;
+  let _updated = false;
+  let _onTick = onTick;
+  let _render = render;
+
+  this.handleTick = (timeStamp) => {
+    tick(timeStamp);
+  };
+
+  this.start = function() {
+    _elapsed = _dt;
+    _time = window.performance.now();
+    _animationFrameRequest = window.requestAnimationFrame(this.handleTick);
+  };
+
+  this.stop = function() {
+    window.cancelAnimationFrame(_animationFrameRequest); 
+  };
+
+  let tick = (timeStamp) => {
+    _elapsed += timeStamp - _time;
+    _time = timeStamp;
 
     // roll back if 3 or more frames behind
-    if(this.elapsed >= this.dt * 3) {
+    if(_elapsed >= _dt * 3) {
       console.log("rolling back frames...");
-      this.elapsed = this.dt;
+      _elapsed = _dt;
     }
 
     // run all the accumulated ticks
-    while(this.elapsed >= this.dt) {
-      this.elapsed -= this.dt;
-      this.update(timeStamp);
-      this.updated = true;
+    while(_elapsed >= _dt) {
+      _elapsed -= _dt;
+      _onTick(timeStamp);
+      _updated = true;
     }
 
     // only draw when necessary
-    if(this.updated) {
-      this.updated = false;
-      this.render(timeStamp);
+    if(_updated) {
+      _updated = false;
+      _render(timeStamp);
     }
 
-    this.animationFrameRequest = window.requestAnimationFrame(this.handleTick);
-  };
-
-  this.handleTick = (timeStamp) => {
-    this.tick(timeStamp);
+    _animationFrameRequest = window.requestAnimationFrame(this.handleTick);
   };
 };
 
 Engine.prototype = {
-  
-  constructor:Engine,
-  
-  start:function() {
-    this.elapsed = this.dt;
-    this.time = window.performance.now();
-    this.animationFrameRequest = window.requestAnimationFrame(this.handleTick);
-  },
-
-  stop:function() {
-    window.cancelAnimationFrame(this.animationFrameRequest); 
-  }
-}
+  constructor:Engine
+};

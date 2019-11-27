@@ -1,21 +1,29 @@
 // how could you want it any other way?
 "use strict";
 
+// initialize state variables
+let resourcesToInit = 2;
+
 // initialize functions
-let onKeyEvent = function(event) {
-  controller.onKeyEvent(event.type, event.keyCode);
+let init = function(e) {
+  resourcesToInit--;
+  if(resourcesToInit > 0) { return; }
+
+  resize();
+  engine.start();
 };
 
-let resize = function(event) {
+let onKeyEvent = function(e) {
+  controller.onKeyEvent(e.type, e.keyCode);
+};
+
+let resize = function(e) {
   field2D.resize(document.documentElement.clientWidth - 32, 
     document.documentElement.clientHeight - 32);
-  field2D.render();
 };
 
 let render = function() {
-  field2D.drawField(game.field);
-
-  field2D.render();
+  field2D.updateField(game.field);
 };
 
 let update = function() {
@@ -38,18 +46,19 @@ let update = function() {
   game.update();
 };
 
-// initialize objects
+// initialize game modules
+let canvas = document.querySelector("canvas");
 let controller = new Controller();
-let field2D = new Field2D(document.querySelector("canvas"));
+let field2D = new Field2D(canvas);
 let game = new GameSim();
 let engine = new Engine(1000 / 30, render, update);
 
 // start the engine when the tilesheet is loaded
-field2D.tilesheet.image.addEventListener("load", function(event) {
-  resize();
-  engine.start();
-}, { once: true });
+field2D.canvas.addEventListener("field-loaded", init, { once: true });
+field2D.canvas.addEventListener("players-loaded", init, { once: true });
+field2D.loadAssets();
 
 window.addEventListener("resize", resize);
 window.addEventListener("keydown", onKeyEvent);  
 window.addEventListener("keyup", onKeyEvent);  
+

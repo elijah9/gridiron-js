@@ -1,0 +1,22 @@
+{
+  "name": "gridiron-js",
+  "version": "0.0.1",
+  "description": "browser based football simulator",
+  "main": "html/index.html",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/elijah9/gridiron-js.git"
+  },
+  "author": "Elijah Lucey",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/elijah9/gridiron-js/issues"
+  },
+  "homepage": "https://github.com/elijah9/gridiron-js#readme",
+  "dependencies": {
+    "paper": "^0.12.3"
+  }
+}
