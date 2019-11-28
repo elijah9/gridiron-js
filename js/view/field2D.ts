@@ -9,14 +9,12 @@ class Field2D {
   private _resourcesToLoad : number = 2;
   private _pixelsPerYardX : number;
   private _pixelsPerYardY : number;
-  private _fieldScale : number = null;
+  private _fieldScale : number;
   private _fieldImg : paper.Item;
   private _baseFieldW : number;
   private _baseFieldH : number;
-  private _playerScale : number = null;
+  private _playerScale : number;
   private _playerImg : paper.Item;
-  private _basePlayerW : number;
-  private _basePlayerH : number;
 
   constructor(canvas : HTMLCanvasElement) {
     this.canvas = canvas;
@@ -39,11 +37,11 @@ class Field2D {
   }
 
   public resize(w : number, h : number) {
-    // reverse the existing scale
-    if(this._fieldScale !== null) {
+    // reverse the existing scales
+    if(this._fieldScale !== undefined) {
       this._fieldImg.scale(1 / this._fieldScale, this._fieldImg.bounds.topLeft);
     }
-    if(this._playerScale !== null) {
+    if(this._playerScale !== undefined) {
       this._playerImg.scale(1 / this._playerScale, new paper.Point(0, 0));
     }
 
@@ -66,7 +64,7 @@ class Field2D {
     this._resourcesToLoad--;
     if(this._resourcesToLoad > 0) { return; }
 
-    //paper.view.draw();
+    // doesn't do anything useful right now but keeping this set up just in case
   }
   
   private drawField() {
@@ -87,10 +85,8 @@ class Field2D {
     paper.project.addLayer(playersLayer);
 
     // method 1 - jersey SVG (not working right now)
-    // paper.project.importSVG("../../media/jersey2.svg", (item) => {
-    //   _playerImg = item;
-    //   _basePlayerW = _playerImg.bounds.width;
-    //   _basePlayerH = _playerImg.bounds.height;
+    // paper.project.importSVG("../../media/jersey2.svg", (item : paper.Item) => {
+    //   this._playerImg = item;
     //   this.canvas.dispatchEvent(playersEvent);
     // });
 
@@ -105,7 +101,7 @@ class Field2D {
 
   private updatePlayer(player : Player) {
     // should change things around so that this line isn't redundant with the identical one in fillPlayerColor()
-    //_playerImg.children.map(function(child) { fillPlayerColor(player, child); });
+    //this._playerImg.children.map((child : paper.Item) => { this.fillPlayerColor(player, child); });
 
     this._playerImg.fillColor = new paper.Color(player.colorMain); // this line should be moved to initialization code
     this._playerImg.bounds.x = player.x * this._pixelsPerYardX;
@@ -120,7 +116,7 @@ class Field2D {
     child.fillColor = new paper.Color(player.colorMain);
     child.strokeColor = new paper.Color(player.colorSec);
     if(typeof child.children !== "undefined") {
-      child.children.map(function(child) { this.fillPlayerColor(player, child); });
+      child.children.map((child) => { this.fillPlayerColor(player, child); });
     }
   }
 };

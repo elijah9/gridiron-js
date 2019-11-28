@@ -14,7 +14,7 @@ class Engine {
     this._render = render;
   }
 
-  public handleTick(timeStamp : number) {
+  public handleTick = (timeStamp : number) => {
     this.tick(timeStamp);
   }
 
@@ -28,7 +28,7 @@ class Engine {
     window.cancelAnimationFrame(this._animationFrameRequest); 
   }
 
-  private tick = (timeStamp : number) => {
+  private tick(timeStamp : number) {
     this._elapsed += timeStamp - this._time;
     this._time = timeStamp;
 
