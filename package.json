@@ -17,6 +17,10 @@
   },
   "homepage": "https://github.com/elijah9/gridiron-js#readme",
   "dependencies": {
+    "@types/paper": "^0.12.3",
     "paper": "^0.12.3"
+  },
+  "devDependencies": {
+    "typescript": "^3.7.2"
   }
 }

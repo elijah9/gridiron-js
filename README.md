@@ -9,6 +9,8 @@ mostly so I can learn web development but would be nice if this became real
 * vector based graphics using Paper.js
 
 # to do list
+* finish converting existing JS to TS
+* the addition of an external library broke the Github portal, fix that because it means it doesn't work as a web app!!!
 * figure out why coloring the jersey isn't working (switched to circle representation of players for now)
 * look at tutorials for 2D browser games ([my current inspiration](https://www.youtube.com/watch?v=w-OKdSHRlfA))
 * explore making the switch to TypeScript while it's still early 
