@@ -3,12 +3,11 @@
     "outDir": "./build",
     "allowJs": true,
     "noImplicitReturns": true,
-    "noUnusedLocals": true,
+    //"noUnusedLocals": true,
     "strict": true,
     "strictNullChecks": false,
-    "target": "es5"
-  },
-  "include": [
-    "./js/**/*"
-  ]
+    "target": "es5",
+    "module": "AMD",
+    "esModuleInterop": true
+  }
 }

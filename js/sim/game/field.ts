@@ -1,6 +1,6 @@
 class Field {
 
-  public player : Player = new Player();
+  public player : GamePlayer = new GamePlayer();
 
   private _friction : number;
   private _gridW : number = 120;
@@ -19,7 +19,7 @@ class Field {
     this.collideObject(this.player);
   }
 
-  private collideObject(object : Player) {
+  private collideObject(object : GamePlayer) {
     if(object.x < 0) {
       object.x = 0;
       object.vx = 0;

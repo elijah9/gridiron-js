@@ -1,3 +1,6 @@
+import { Field2D } from "./view/field2D";
+import { Controller } from "./controllers/controller";
+
 // initialize state variables
 let resourcesToInit = 2;
 
@@ -45,7 +48,7 @@ let update = function() {
 
 // initialize game modules
 let canvas = document.querySelector("canvas");
-let controller = new Controller();
+let controller = new Controller(); 
 let field2D : Field2D = new Field2D(canvas);
 let game = new GameSim();
 let engine = new Engine(1000 / 30, render, update);

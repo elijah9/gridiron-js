@@ -1,7 +1,7 @@
-class Player {
+class GamePlayer {
 
-  public colorMain : string = "#ff0000";
-  public colorSec : string = "rgba(100, 100, 100)";
+  public colorMain : string = "#ff0000"; // move to Player
+  public colorSec : string = "rgba(100, 100, 100)"; // move to Player
   public x : number = 15;
   public y : number = 25;
   public vx : number = 0;

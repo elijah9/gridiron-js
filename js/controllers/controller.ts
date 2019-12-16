@@ -1,4 +1,4 @@
-class Controller {
+export class Controller {
 
   public down : ButtonInput = new ButtonInput();
   public left : ButtonInput = new ButtonInput();
@@ -39,3 +39,4 @@ class ButtonInput {
     this.down = down;
   }
 }
+

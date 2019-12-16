@@ -1,6 +1,10 @@
-define(["require", "exports", "paper"], function (require, exports, paper) {
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+define(["require", "exports", "../../node_modules/paper/dist/paper-core"], function (require, exports, paper_core_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
+    paper_core_1 = __importDefault(paper_core_1);
     var Field2D = /** @class */ (function () {
         function Field2D(canvas) {
             this._resourcesToLoad = 2;
@@ -10,7 +14,7 @@ define(["require", "exports", "paper"], function (require, exports, paper) {
             this.canvas.addEventListener("players-loaded", this.initDraw, { once: true });
         }
         Field2D.prototype.loadAssets = function () {
-            paper.setup(this.canvas);
+            paper_core_1.default.setup(this.canvas);
             this.drawField();
             this.drawPlayers();
         };
@@ -24,7 +28,7 @@ define(["require", "exports", "paper"], function (require, exports, paper) {
                 this._fieldImg.scale(1 / this._fieldScale, this._fieldImg.bounds.topLeft);
             }
             if (this._playerScale !== undefined) {
-                this._playerImg.scale(1 / this._playerScale, new paper.Point(0, 0));
+                this._playerImg.scale(1 / this._playerScale, new paper_core_1.default.Point(0, 0));
             }
             var ratio = this._baseFieldH / this._baseFieldW;
             this._fieldScale = h / w > ratio ? w / this._baseFieldW : h / this._baseFieldH;
@@ -35,7 +39,7 @@ define(["require", "exports", "paper"], function (require, exports, paper) {
             this._pixelsPerYardY = this._fieldImg.bounds.height / 54.1;
             var newPlayerW = this._pixelsPerYardX * 3;
             this._playerScale = newPlayerW / oldPlayerW;
-            this._playerImg.scale(this._playerScale, new paper.Point(0, 0));
+            this._playerImg.scale(this._playerScale, new paper_core_1.default.Point(0, 0));
         };
         // I believe the way paper.js works means I only have to render here (not every frame)
         Field2D.prototype.initDraw = function (e) {
@@ -48,9 +52,9 @@ define(["require", "exports", "paper"], function (require, exports, paper) {
         Field2D.prototype.drawField = function () {
             var _this = this;
             var fieldEvent = new Event("field-loaded");
-            var fieldLayer = new paper.Layer();
-            paper.project.addLayer(fieldLayer);
-            paper.project.importSVG("../../media/field2D.svg", function (item) {
+            var fieldLayer = new paper_core_1.default.Layer();
+            paper_core_1.default.project.addLayer(fieldLayer);
+            paper_core_1.default.project.importSVG("../../media/field2D.svg", function (item) {
                 _this._fieldImg = item;
                 _this._baseFieldW = _this._fieldImg.bounds.width;
                 _this._baseFieldH = _this._fieldImg.bounds.height;
@@ -59,15 +63,15 @@ define(["require", "exports", "paper"], function (require, exports, paper) {
         };
         Field2D.prototype.drawPlayers = function () {
             var playersEvent = new Event("players-loaded");
-            var playersLayer = new paper.Layer();
-            paper.project.addLayer(playersLayer);
+            var playersLayer = new paper_core_1.default.Layer();
+            paper_core_1.default.project.addLayer(playersLayer);
             // method 1 - jersey SVG (not working right now)
             // paper.project.importSVG("../../media/jersey2.svg", (item : paper.Item) => {
             //   this._playerImg = item;
             //   this.canvas.dispatchEvent(playersEvent);
             // });
             // method 2 - just a circle
-            this._playerImg = new paper.Path.Circle({
+            this._playerImg = new paper_core_1.default.Path.Circle({
                 center: [0, 0],
                 radius: 3
             });
@@ -77,7 +81,7 @@ define(["require", "exports", "paper"], function (require, exports, paper) {
         Field2D.prototype.updatePlayer = function (player) {
             // should change things around so that this line isn't redundant with the identical one in fillPlayerColor()
             //this._playerImg.children.map((child : paper.Item) => { this.fillPlayerColor(player, child); });
-            this._playerImg.fillColor = new paper.Color(player.colorMain); // this line should be moved to initialization code
+            this._playerImg.fillColor = new paper_core_1.default.Color(player.colorMain); // this line should be moved to initialization code
             this._playerImg.bounds.x = player.x * this._pixelsPerYardX;
             this._playerImg.bounds.y = player.y * this._pixelsPerYardY;
             //let x = _playerImg.bounds.x;
@@ -86,8 +90,8 @@ define(["require", "exports", "paper"], function (require, exports, paper) {
         };
         Field2D.prototype.fillPlayerColor = function (player, child) {
             var _this = this;
-            child.fillColor = new paper.Color(player.colorMain);
-            child.strokeColor = new paper.Color(player.colorSec);
+            child.fillColor = new paper_core_1.default.Color(player.colorMain);
+            child.strokeColor = new paper_core_1.default.Color(player.colorSec);
             if (typeof child.children !== "undefined") {
                 child.children.map(function (child) { _this.fillPlayerColor(player, child); });
             }

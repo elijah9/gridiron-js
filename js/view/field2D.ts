@@ -1,9 +1,6 @@
-/// <reference path="../../node_modules/paper/dist/paper.d.ts" />
+import paper from "../../node_modules/paper/dist/paper-core"
 
-/// <reference path="../sim/field.ts" />
-
-class Field2D {
-
+export class Field2D {
   public canvas : HTMLCanvasElement;
 
   private _resourcesToLoad : number = 2;
@@ -75,7 +72,7 @@ class Field2D {
       this._fieldImg = item;
       this._baseFieldW = this._fieldImg.bounds.width;
       this._baseFieldH = this._fieldImg.bounds.height;
-      canvas.dispatchEvent(fieldEvent);
+      this.canvas.dispatchEvent(fieldEvent);
     });
   }
 
@@ -96,10 +93,10 @@ class Field2D {
       radius: 3
     });
     playersLayer.addChild(this._playerImg);
-    canvas.dispatchEvent(playersEvent);
+    this.canvas.dispatchEvent(playersEvent);
   }
 
-  private updatePlayer(player : Player) {
+  private updatePlayer(player : GamePlayer) {
     // should change things around so that this line isn't redundant with the identical one in fillPlayerColor()
     //this._playerImg.children.map((child : paper.Item) => { this.fillPlayerColor(player, child); });
 
@@ -112,11 +109,11 @@ class Field2D {
     //console.log({x, y});
   }
 
-  private fillPlayerColor(player : Player, child : paper.Item) {
+  private fillPlayerColor(player : GamePlayer, child : paper.Item) {
     child.fillColor = new paper.Color(player.colorMain);
     child.strokeColor = new paper.Color(player.colorSec);
     if(typeof child.children !== "undefined") {
       child.children.map((child) => { this.fillPlayerColor(player, child); });
     }
   }
-};
+}
