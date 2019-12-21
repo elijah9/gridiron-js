@@ -1,4 +1,4 @@
-import Set from "../../../node_modules/typescript-collections/dist/lib/Set"
+import { Set } from "typescript-collections"
 import { IPlayer } from "./player";
 
 export interface ITeam {

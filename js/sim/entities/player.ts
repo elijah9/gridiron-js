@@ -1,4 +1,4 @@
-import Dictionary from "../../../node_modules/typescript-collections/dist/lib/Dictionary"
+import { Dictionary } from "typescript-collections"
 
 export enum PlayerAttribute {
   Speed

@@ -4,7 +4,10 @@
   "description": "browser based football simulator",
   "main": "html/index.html",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "webpack-dev-server --inline",
+    "predev": "npm run build",
+    "build": "webpack"
   },
   "repository": {
     "type": "git",
@@ -17,15 +20,16 @@
   },
   "homepage": "https://github.com/elijah9/gridiron-js#readme",
   "dependencies": {
-    "@types/paper": "^0.12.3",
     "paper": "^0.12.3",
-    "requirejs": "^2.3.6",
+    "source-map-loader": "^0.2.4",
     "typescript-collections": "^1.3.3"
   },
   "devDependencies": {
-    "@types/requirejs": "^2.1.31",
+    "awesome-typescript-loader": "^5.2.1",
+    "@types/paper": "^0.12.3",
     "typescript": "^3.7.2",
     "webpack": "^4.41.2",
-    "webpack-cli": "^3.3.10"
+    "webpack-cli": "^3.3.10",
+    "webpack-dev-server": "^3.9.0"
   }
 }

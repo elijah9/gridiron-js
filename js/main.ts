@@ -1,5 +1,7 @@
 import { Field2D } from "./view/field2D";
 import { Controller } from "./controllers/controller";
+import { GameSim } from "./sim/game/gameSim";
+import { Engine } from "./sim/game/engine";
 
 // initialize state variables
 let resourcesToInit = 2;

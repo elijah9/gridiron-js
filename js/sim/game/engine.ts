@@ -1,4 +1,4 @@
-class Engine {
+export class Engine {
   
   private _elapsed : number = 0;
   private _animationFrameRequest : number;

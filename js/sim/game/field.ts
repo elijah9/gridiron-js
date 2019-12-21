@@ -1,4 +1,6 @@
-class Field {
+import { GamePlayer } from "./gamePlayer"
+
+export class Field {
 
   public player : GamePlayer = new GamePlayer();
 

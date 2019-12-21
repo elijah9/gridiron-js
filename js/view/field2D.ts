@@ -1,4 +1,6 @@
-import paper from "../../node_modules/paper/dist/paper-core"
+import { Item, Point, Layer, Path, Color  } from "paper"
+import { Field } from "../sim/game/field"
+import { GamePlayer } from "../sim/game/gamePlayer"
 
 export class Field2D {
   public canvas : HTMLCanvasElement;
@@ -7,11 +9,11 @@ export class Field2D {
   private _pixelsPerYardX : number;
   private _pixelsPerYardY : number;
   private _fieldScale : number;
-  private _fieldImg : paper.Item;
+  private _fieldImg : Item;
   private _baseFieldW : number;
   private _baseFieldH : number;
   private _playerScale : number;
-  private _playerImg : paper.Item;
+  private _playerImg : Item;
 
   constructor(canvas : HTMLCanvasElement) {
     this.canvas = canvas;
@@ -39,7 +41,7 @@ export class Field2D {
       this._fieldImg.scale(1 / this._fieldScale, this._fieldImg.bounds.topLeft);
     }
     if(this._playerScale !== undefined) {
-      this._playerImg.scale(1 / this._playerScale, new paper.Point(0, 0));
+      this._playerImg.scale(1 / this._playerScale, new Point(0, 0));
     }
 
     let ratio = this._baseFieldH / this._baseFieldW;
@@ -53,7 +55,7 @@ export class Field2D {
     this._pixelsPerYardY = this._fieldImg.bounds.height / 54.1;
     let newPlayerW = this._pixelsPerYardX * 3;
     this._playerScale = newPlayerW / oldPlayerW;
-    this._playerImg.scale(this._playerScale, new paper.Point(0, 0));
+    this._playerImg.scale(this._playerScale, new Point(0, 0));
   }
 
   // I believe the way paper.js works means I only have to render here (not every frame)
@@ -66,9 +68,9 @@ export class Field2D {
   
   private drawField() {
     let fieldEvent = new Event("field-loaded");
-    let fieldLayer = new paper.Layer();
+    let fieldLayer = new Layer();
     paper.project.addLayer(fieldLayer);
-    paper.project.importSVG("../../media/field2D.svg", (item : paper.Item) => {
+    paper.project.importSVG("../../media/field2D.svg", (item : Item) => {
       this._fieldImg = item;
       this._baseFieldW = this._fieldImg.bounds.width;
       this._baseFieldH = this._fieldImg.bounds.height;
@@ -78,7 +80,7 @@ export class Field2D {
 
   private drawPlayers() {
     let playersEvent = new Event("players-loaded");
-    let playersLayer = new paper.Layer();
+    let playersLayer = new Layer();
     paper.project.addLayer(playersLayer);
 
     // method 1 - jersey SVG (not working right now)
@@ -88,7 +90,7 @@ export class Field2D {
     // });
 
     // method 2 - just a circle
-    this._playerImg = new paper.Path.Circle({
+    this._playerImg = new Path.Circle({
       center: [0, 0],
       radius: 3
     });
@@ -100,7 +102,7 @@ export class Field2D {
     // should change things around so that this line isn't redundant with the identical one in fillPlayerColor()
     //this._playerImg.children.map((child : paper.Item) => { this.fillPlayerColor(player, child); });
 
-    this._playerImg.fillColor = new paper.Color(player.colorMain); // this line should be moved to initialization code
+    this._playerImg.fillColor = new Color(player.colorMain); // this line should be moved to initialization code
     this._playerImg.bounds.x = player.x * this._pixelsPerYardX;
     this._playerImg.bounds.y = player.y * this._pixelsPerYardY;
 
@@ -109,9 +111,9 @@ export class Field2D {
     //console.log({x, y});
   }
 
-  private fillPlayerColor(player : GamePlayer, child : paper.Item) {
-    child.fillColor = new paper.Color(player.colorMain);
-    child.strokeColor = new paper.Color(player.colorSec);
+  private fillPlayerColor(player : GamePlayer, child : Item) {
+    child.fillColor = new Color(player.colorMain);
+    child.strokeColor = new Color(player.colorSec);
     if(typeof child.children !== "undefined") {
       child.children.map((child) => { this.fillPlayerColor(player, child); });
     }

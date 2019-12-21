@@ -1,4 +1,4 @@
-class GamePlayer {
+export class GamePlayer {
 
   public colorMain : string = "#ff0000"; // move to Player
   public colorSec : string = "rgba(100, 100, 100)"; // move to Player
