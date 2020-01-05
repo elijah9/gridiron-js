@@ -1,0 +1,22 @@
+<!-- Toolbar -->
+<div class="toolbar" role="banner">
+  <div class="padded">Welcome</div>
+  <button (click)="newGame()" [disabled]="!hideGame">Play</button>
+</div>
+
+<div class="content" role="main">
+
+  <div [hidden]="hideGame">
+    <app-game-view [hidden]="hideGame"></app-game-view>
+  </div>
+
+  <!-- Footer -->
+  <footer>
+      testing footer
+  </footer>
+
+</div>
+
+
+
+<router-outlet></router-outlet>

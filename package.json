@@ -1,35 +1,54 @@
 {
-  "name": "gridiron-js",
-  "version": "0.0.1",
-  "description": "browser based football simulator",
-  "main": "html/index.html",
+  "name": "gridiron-ng",
+  "version": "0.0.0",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "webpack-dev-server --inline",
-    "predev": "npm run build",
-    "build": "webpack"
+    "ng": "ng",
+    "start": "ng serve",
+    "build": "ng build",
+    "test": "ng test",
+    "lint": "ng lint",
+    "e2e": "ng e2e"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/elijah9/gridiron-js.git"
-  },
-  "author": "Elijah Lucey",
-  "license": "GPL-3.0",
-  "bugs": {
-    "url": "https://github.com/elijah9/gridiron-js/issues"
-  },
-  "homepage": "https://github.com/elijah9/gridiron-js#readme",
+  "private": true,
   "dependencies": {
-    "paper": "^0.12.3",
-    "source-map-loader": "^0.2.4",
-    "typescript-collections": "^1.3.3"
+    "@angular/animations": "~8.2.14",
+    "@angular/common": "~8.2.14",
+    "@angular/compiler": "~8.2.14",
+    "@angular/core": "~8.2.14",
+    "@angular/forms": "~8.2.14",
+    "@angular/platform-browser": "~8.2.14",
+    "@angular/platform-browser-dynamic": "~8.2.14",
+    "@angular/router": "~8.2.14",
+    "jquery": "^3.4.1",
+    "rxjs": "~6.4.0",
+    "svg.js": "^2.7.1",
+    "tslib": "^1.10.0",
+    "typescript-collections": "^1.3.3",
+    "zone.js": "~0.9.1"
   },
   "devDependencies": {
-    "awesome-typescript-loader": "^5.2.1",
-    "@types/paper": "^0.12.3",
-    "typescript": "^3.7.2",
-    "webpack": "^4.41.2",
-    "webpack-cli": "^3.3.10",
-    "webpack-dev-server": "^3.9.0"
+    "@angular-devkit/build-angular": "~0.803.21",
+    "@angular/cli": "~8.3.21",
+    "@angular/compiler-cli": "~8.2.14",
+    "@angular/language-service": "~8.2.14",
+    "@types/angular": "^1.6.57",
+    "@types/jasmine": "~3.3.8",
+    "@types/jasminewd2": "~2.0.3",
+    "@types/jquery": "^3.3.31",
+    "@types/node": "~8.9.4",
+    "@types/snapsvg": "^0.5.0",
+    "@types/svg.js": "^2.3.1",
+    "codelyzer": "^5.0.0",
+    "jasmine-core": "~3.4.0",
+    "jasmine-spec-reporter": "~4.2.1",
+    "karma": "~4.1.0",
+    "karma-chrome-launcher": "~2.2.0",
+    "karma-coverage-istanbul-reporter": "~2.0.1",
+    "karma-jasmine": "~2.0.1",
+    "karma-jasmine-html-reporter": "^1.4.0",
+    "protractor": "~5.4.0",
+    "ts-node": "~7.0.0",
+    "tslint": "~5.15.0",
+    "typescript": "~3.5.3"
   }
 }
