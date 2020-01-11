@@ -9,7 +9,9 @@ export class SnapBall extends PlayerMechanic {
 
   protected onStart() { }
 
-  protected onTick() {
+  onTick() {
+    console.log("SnapBall onTick() called");
+
     if(this._ball.carrier != this._player) {
       throw new Error("center doesn't have the ball, how'd u manage that lol");
     }

@@ -20,5 +20,5 @@ export class PursueBall extends PlayerMechanic {
     await this._run.start(this._player, this._players, this._ball);
   }
   
-  protected onTick() { }
+  onTick() { }
 }

@@ -8,7 +8,7 @@ export abstract class PlayerMechanic {
   name : string; // optional but can be useful for debugging
 
   private static readonly TicksPerSecond = 30;
-  protected static readonly DeltaT = 1 / PlayerMechanic.TicksPerSecond;
+  static readonly DeltaT = 1 / PlayerMechanic.TicksPerSecond;
 
   readonly mechanicComplete = new LiteEvent<MechanicCompleteEventArgs>();
 
@@ -26,15 +26,15 @@ export abstract class PlayerMechanic {
 
       this.onStart();
 
-      this._timerHandle = await new Promise(() => window.setTimeout(this.onTick(), 1000 / PlayerMechanic.DeltaT));
+      console.log(`mechanic ${this.name} starting...`);
       this._isRunning = true;
-      console.log(`mechanic ${this.name} started`);
+      this.startMechanic();
     }
   }
 
   public stop() {
     if(this._isRunning) {
-      window.clearTimeout(this._timerHandle);
+      window.clearInterval(this._timerHandle);
       this._isRunning = false;
       console.log(`mechanic ${this.name} stopped`);
     }
@@ -44,8 +44,14 @@ export abstract class PlayerMechanic {
     this.mechanicComplete.trigger(new MechanicCompleteEventArgs(this, playOver));
   }
 
+  private startMechanic() {
+    this._timerHandle = window.setInterval(() => {
+      this.onTick()
+    }, 1000 * PlayerMechanic.DeltaT);
+  }
+
   protected abstract onStart();
-  protected abstract onTick();
+  abstract onTick();
 }
 
 export class MechanicCompleteEventArgs {

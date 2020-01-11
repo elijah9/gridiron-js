@@ -59,10 +59,10 @@ export class GameViewComponent implements OnInit {
   }
 
   setupTestPlay() {
-    this.game.setupPlay(new TestOffensePlay(), new TestDefensePlay());
-
     this.initPlayers();
     this.initBall();
+
+    this.game.setupPlay(new TestOffensePlay(), new TestDefensePlay());
 
     console.log("play initialized");
   }
@@ -88,26 +88,28 @@ export class GameViewComponent implements OnInit {
   }
 
   private initPlayer(player : GamePlayer) {
-    if(player.onField) {
-      this.drawAndAddPlayer(player);
-    }
-
     // subscribe to position and onField change
     player.onFieldChanged.subscribe((e : OnFieldEventArgs) => {
-      let moveHandler = (e : FieldPointEventArgs) => this.movePlayer(player, e.point);
-      if(e.onField) {
-        player.positionChanged.subscribe(moveHandler);
-
-        this.drawAndAddPlayer(player);
-      } else {
-        player.positionChanged.unsubscribe(moveHandler)
-
-        // remove drawing and dictionary entry
-        let team = this.getPlayerTeamDrawing(player);
-        team.getValue(player).remove();
-        team.remove(player);
-      }
+      this.initPlayerHelper(player);
     });
+
+    //this.initPlayerHelper(player);
+  }
+
+  private initPlayerHelper(player : GamePlayer) {
+    let moveHandler = (f : FieldPointEventArgs) => this.movePlayer(player, f.point);
+    if(player.onField) {
+      player.positionChanged.subscribe(moveHandler);
+
+      this.drawAndAddPlayer(player);
+    } else {
+      player.positionChanged.unsubscribe(moveHandler)
+
+      // remove drawing and dictionary entry
+      let team = this.getPlayerTeamDrawing(player);
+      team.getValue(player).remove();
+      team.remove(player);
+    }
   }
 
   private getPlayerTeamDrawing(player : GamePlayer) : Dictionary<GamePlayer, Svg.Circle> {

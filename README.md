@@ -13,7 +13,7 @@ mostly so I can learn web development but would be nice if this became real
 * vector based graphics using Svg.JS
 
 # to do list
-* get plays working -- think I need to use worker threads
+* get play functionality working
 * get app working via Github.io again
 
 # shelved tasks

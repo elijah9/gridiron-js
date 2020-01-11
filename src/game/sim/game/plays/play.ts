@@ -9,12 +9,12 @@ import { DepthRole as DepthRole, Position } from '../../positionPlayer';
 
 export abstract class Play {
 
-  public readonly initialPositions = new Dictionary<DepthRole, IDirectionalFieldPoint>();
+  readonly initialPositions = new Dictionary<DepthRole, IDirectionalFieldPoint>();
 
   protected _players : Dictionary<DepthRole, GamePlayer>;
   private _activeMechanics : LinkedList<PlayerMechanic>;
 
-  public readonly playOver = new LiteEvent<void>();
+  readonly playOver = new LiteEvent<void>();
   
   protected initializeRole(position : Position, posDepth : number, depth : number,
     offset : number, angle : number) : DepthRole {
@@ -25,7 +25,7 @@ export abstract class Play {
     return role;
   }
 
-  public initialize(players : Dictionary<DepthRole, GamePlayer>, startLine : number) {
+  initialize(players : Dictionary<DepthRole, GamePlayer>, startLine : number) {
     this._players = players;
     this._activeMechanics = new LinkedList<PlayerMechanic>();
     this.initializePlayerLocations(startLine);
@@ -34,14 +34,10 @@ export abstract class Play {
     });
   }
 
-  public async start(ball : Ball) {
-    await this.runPlay(ball);
-  }
-
   protected addMechanic(mechanic : PlayerMechanic, beforeStopping? : Function) {
     mechanic.mechanicComplete.subscribe((e? : MechanicCompleteEventArgs) => {
       if(beforeStopping != null) {
-        beforeStopping.call(this);
+        beforeStopping();
       }
 
       if(e.playOver) {
@@ -49,7 +45,7 @@ export abstract class Play {
         return;
       }
 
-      e.mechanic.stop();
+      mechanic.stop();
       this._activeMechanics;
     });
     this._activeMechanics.add(mechanic);
@@ -65,7 +61,14 @@ export abstract class Play {
     });
   }
 
-  public stop() {
+  async start(ball : Ball) {
+    //const worker = createWorker(startPlay);
+    //await worker(this, ball);
+    //return new Promise(res => startPlay(this, ball));
+    this.runPlay(ball);
+  }
+
+  stop() {
     this._activeMechanics.forEach(mechanic => {
       mechanic.stop();
     });
@@ -73,5 +76,5 @@ export abstract class Play {
     this.playOver.trigger();
   }
 
-  protected abstract async runPlay(ball : Ball);
+  abstract async runPlay(ball : Ball);
 }

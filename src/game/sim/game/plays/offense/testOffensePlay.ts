@@ -20,7 +20,7 @@ export class TestOffensePlay extends OffensePlay {
 
       let player : GamePlayer = this._players.getValue(role);
       let run = new PlayerRun(new FieldPoint(100, player.offset));
-      run.name = "rb";
+      run.name = player.player.jerseyNumber.toString() + " run";
       this.addMechanic(run);
       await run.start(player, this._players, ball);
     }

@@ -2,7 +2,8 @@ import { Play } from '../play';
 import { Ball } from '../../ball';
 import { SnapBall } from '../../playerMechanics/offense/snapBall';
 import { Position, DepthRole } from 'src/game/sim/positionPlayer';
-import { wait } from 'src/game/util/threadUtils';
+import { waitFor } from 'src/game/util/threadUtils';
+import { PlayerMechanic } from '../../playerMechanics/playerMechanic';
 
 export abstract class OffensePlay extends Play {
   readonly snapper : DepthRole;
@@ -13,16 +14,13 @@ export abstract class OffensePlay extends Play {
   }
 
   // do not override!!!
-  protected async runPlay(ball : Ball) {
+  async runPlay(ball : Ball) {
     let snapperMechanic = new SnapBall();
 
-    let isSnapping : boolean;
+    let isSnapping = false;
     this.addMechanic(snapperMechanic, () => isSnapping = false);
-    isSnapping = true;
     await snapperMechanic.start(this._players.getValue(this.snapper), this._players, ball);
-
-    while (isSnapping) { wait(0); }
-    await this.runOffensePlay(ball);
+    waitFor(() => !isSnapping, () => this.runOffensePlay(ball), PlayerMechanic.DeltaT);
   }
 
   protected abstract async runOffensePlay(ball : Ball);

@@ -23,5 +23,5 @@ export class TackleCarrier extends PlayerMechanic {
     await this._pursuit.start(this._player, this._players, this._ball);
   }
 
-  protected onTick() { }
+  onTick() { }
 }

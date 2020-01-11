@@ -29,7 +29,7 @@ export class PlayerRun extends PlayerMechanic {
 
   protected onStart() { }
 
-  protected onTick() { 
+  onTick() { 
     // nudge direction
     let idealDir : number = this._player.getAngleBetween(this._destination);
     let dTheta : number = PlayerMechanic.DeltaT * PlayerRun.DefaultAgility * MathUtils.DegreesToRadians;
@@ -52,6 +52,7 @@ export class PlayerRun extends PlayerMechanic {
       this.done(false);
       return;
     }
+    console.log(`running to ${this._player.yards + dPosNorm.x}, ${this._player.offset + dPosNorm.y}`);
     this._player.set_yards(this._player.yards + dPosNorm.x);
     this._player.set_offset(this._player.offset + dPosNorm.y);
   }
