@@ -16,6 +16,11 @@ import { FieldPointEventArgs, IFieldPoint } from '../../game/sim/game/iFieldPoin
 })
 export class GameViewComponent implements OnInit {
   
+  gameActive = false;
+  driveActive = false;
+  playReady = false;
+  playActive = false;
+
   private _hidden : boolean;
   get hidden() : boolean {
     return this._hidden;
@@ -28,10 +33,10 @@ export class GameViewComponent implements OnInit {
   }
 
   private _game : GameSim;
-  private get game() : GameSim {
+  get game() : GameSim {
     return this._game;
   }
-  private set game(game : GameSim) {
+  private set_game(game : GameSim) {
     if(this._game == null) {
       this._game = game;
     } else {
@@ -39,9 +44,18 @@ export class GameViewComponent implements OnInit {
     }
   }
 
+  get printableYards() : number {
+    let los = this.game.lineOfScrimmage;
+    if(los >= 50) {
+      return 100 - los;
+    } else {
+      return -los;
+    }
+  }
+
   private _svg : Svg.Doc;
-  private _home : Dictionary<GamePlayer, Svg.Circle>;
-  private _away : Dictionary<GamePlayer, Svg.Circle>;
+  private _players : Map<GamePlayer, Svg.Circle>;
+  private _initialized = false;
 
   private readonly _scale = 12;
   private readonly _fieldLength = 120;
@@ -55,34 +69,43 @@ export class GameViewComponent implements OnInit {
   setupTestDrive() {
     this.game.setupDrive(25, true);
 
+    this.driveActive = true;
     console.log("drive initialized");
   }
 
   setupTestPlay() {
-    this.initPlayers();
-    this.initBall();
+    if(!this._initialized) {
+      this.initPlayers();
+      this.initBall();
+      this._initialized = true;
+    }
 
     this.game.setupPlay(new TestOffensePlay(), new TestDefensePlay());
 
+    this.playReady = true;
     console.log("play initialized");
   }
 
   async runTestPlay() {
+    this.playActive = true;
     await this.game.runCurrentPlay();
+
+    this.playReady = false;
+    this.playActive = false;
   }
 
   private startGame() {
-    this.game = genTestGame();
+    this.set_game(genTestGame());
 
     this._svg = new Svg.Doc("gameView2D").size(this._fieldLength * this._scale, this._fieldWidth * this._scale);
 
+    this.gameActive = true;
     console.log("game started");
   }
 
   private initPlayers() {
     // initialize svg objects
-    this._home = new Dictionary<GamePlayer, Svg.Circle>();
-    this._away = new Dictionary<GamePlayer, Svg.Circle>();
+    this._players = new Map<GamePlayer, Svg.Circle>();
     this.game.home.players.map((player : GamePlayer) => { this.initPlayer(player); });
     this.game.away.players.map((player : GamePlayer) => { this.initPlayer(player); });
   }
@@ -90,39 +113,31 @@ export class GameViewComponent implements OnInit {
   private initPlayer(player : GamePlayer) {
     // subscribe to position and onField change
     player.onFieldChanged.subscribe((e : OnFieldEventArgs) => {
-      this.initPlayerHelper(player);
+      this.updatePlayer(player, e.onField);
     });
-
-    //this.initPlayerHelper(player);
   }
 
-  private initPlayerHelper(player : GamePlayer) {
+  private updatePlayer(player : GamePlayer, onField : boolean) {
     let moveHandler = (f : FieldPointEventArgs) => this.movePlayer(player, f.point);
-    if(player.onField) {
+    if(onField && !this._players.has(player)) {
       player.positionChanged.subscribe(moveHandler);
 
       this.drawAndAddPlayer(player);
-    } else {
-      player.positionChanged.unsubscribe(moveHandler)
-
+    } else if(!onField && this._players.has(player)) {
       // remove drawing and dictionary entry
-      let team = this.getPlayerTeamDrawing(player);
-      team.getValue(player).remove();
-      team.remove(player);
+      player.positionChanged.unsubscribe(moveHandler)
+      this._svg.removeElement(this._players.get(player));
+      this._players.delete(player);
     }
   }
 
-  private getPlayerTeamDrawing(player : GamePlayer) : Dictionary<GamePlayer, Svg.Circle> {
-    return this.game.isPlayerHome(player) ? this._home : this._away;
-  }
-
   private drawAndAddPlayer(player : GamePlayer) {
-    let teamDrawing = this.getPlayerTeamDrawing(player);
     let team = this.game.getPlayerTeam(player);
-    teamDrawing.setValue(player, this.genPlayerDrawing(player, team));
+    this._players.set(player, this.genPlayerDrawing(player, team));
   }
 
   private genPlayerDrawing(player : GamePlayer, team : GameTeam) : Svg.Circle {
+    //console.log(`drawing ${player.player.jerseyNumber}`)
     let color = team.team.colorMain;
     return this._svg.circle(this._scale).move(this.scaleYards(player.yards), 
       this.scaleOffset(player.offset)).fill(color);
@@ -139,8 +154,9 @@ export class GameViewComponent implements OnInit {
   }
   
   private movePlayer(player : GamePlayer, pos : IFieldPoint) {
-    this.getPlayerTeamDrawing(player).getValue(player)
-      .move(this.scaleYards(pos.yards), this.scaleOffset(pos.offset));
+    try {
+      this._players.get(player).move(this.scaleYards(pos.yards), this.scaleOffset(pos.offset));
+    } catch(TypeError) { }
   }
 
   private scaleYards(yards : number) : number {

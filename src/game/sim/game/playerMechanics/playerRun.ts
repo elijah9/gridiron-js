@@ -30,6 +30,19 @@ export class PlayerRun extends PlayerMechanic {
   protected onStart() { }
 
   onTick() { 
+    // calculate speed and distance
+    let speed : number = this._player.player.attributes.getValue(PlayerAttribute.Speed);
+    let scaleFactor : number = PlayerMechanic.DeltaT * 
+      (PlayerRun.MinSpeed + speed * (PlayerRun.MaxSpeed - PlayerRun.MinSpeed));
+    let dPos : Vector2 = this._player.distanceVec(this._destination);
+    let distance : number = dPos.length;
+    let dPosNorm : Vector2 = dPos.divide(distance);
+    if(distance <= scaleFactor) {
+      // destination already reached
+      console.log("destination reached " + this.name);
+      this.done(false);
+    }
+
     // nudge direction
     let idealDir : number = this._player.getAngleBetween(this._destination);
     let dTheta : number = PlayerMechanic.DeltaT * PlayerRun.DefaultAgility * MathUtils.DegreesToRadians;
@@ -40,20 +53,9 @@ export class PlayerRun extends PlayerMechanic {
       this._player.angle += dTheta;
     }
 
-    // run
-    let dPos : Vector2 = this._player.distanceVec(this._destination);
-    let distance : number = dPos.length;
-    let speed : number = this._player.player.attributes.getValue(PlayerAttribute.Speed);
-    let scaleFactor : number = PlayerMechanic.DeltaT * 
-      (PlayerRun.MinSpeed + speed * (PlayerRun.MaxSpeed - PlayerRun.MinSpeed));
-    let dPosNorm : Vector2 = dPos.divide(distance).multiply(scaleFactor);
-    if(distance <= scaleFactor) {
-      // destination already reached
-      this.done(false);
-      return;
-    }
-    console.log(`running to ${this._player.yards + dPosNorm.x}, ${this._player.offset + dPosNorm.y}`);
-    this._player.set_yards(this._player.yards + dPosNorm.x);
-    this._player.set_offset(this._player.offset + dPosNorm.y);
+    // move player
+    let dPosScaled : Vector2 = dPosNorm.multiply(scaleFactor);
+    this._player.set_yards(this._player.yards + dPosScaled.x);
+    this._player.set_offset(this._player.offset + dPosScaled.y);
   }
 }

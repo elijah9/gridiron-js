@@ -13,8 +13,9 @@ export abstract class Play {
 
   protected _players : Dictionary<DepthRole, GamePlayer>;
   private _activeMechanics : LinkedList<PlayerMechanic>;
+  private _isRunning = false;
 
-  readonly playOver = new LiteEvent<void>();
+  readonly playOver = new LiteEvent<Play>();
   
   protected initializeRole(position : Position, posDepth : number, depth : number,
     offset : number, angle : number) : DepthRole {
@@ -62,18 +63,21 @@ export abstract class Play {
   }
 
   async start(ball : Ball) {
-    //const worker = createWorker(startPlay);
-    //await worker(this, ball);
-    //return new Promise(res => startPlay(this, ball));
+    this._isRunning = true;
     this.runPlay(ball);
   }
 
   stop() {
+    // console.log("stopping play");
+    // console.log(this);
     this._activeMechanics.forEach(mechanic => {
       mechanic.stop();
     });
 
-    this.playOver.trigger();
+    if(this._isRunning) {
+      this._isRunning = false;
+      this.playOver.trigger(this);
+    }
   }
 
   abstract async runPlay(ball : Ball);

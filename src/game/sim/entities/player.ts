@@ -2,7 +2,7 @@ import { Dictionary } from "typescript-collections"
 import { PositionGroup } from '../positionPlayer';
 
 export enum PlayerAttribute {
-  Speed
+  Speed, Tackle
 }
 
 export interface IPlayer {

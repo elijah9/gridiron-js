@@ -13,8 +13,13 @@ mostly so I can learn web development but would be nice if this became real
 * vector based graphics using Svg.JS
 
 # to do list
-* get play functionality working
+* game event log for play outcome
+* run block mechanic
+* make real (but still basic) 11 on 11 plays
 * get app working via Github.io again
+
+# bugs to fix
+* play being stopped too often
 
 # shelved tasks
 * figure out why coloring the jersey isn't working (switched to circle representation of players for now)

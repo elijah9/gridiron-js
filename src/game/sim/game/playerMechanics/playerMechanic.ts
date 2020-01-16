@@ -26,7 +26,7 @@ export abstract class PlayerMechanic {
 
       this.onStart();
 
-      console.log(`mechanic ${this.name} starting...`);
+      //console.log(`mechanic ${this.name} starting...`);
       this._isRunning = true;
       this.startMechanic();
     }
@@ -36,7 +36,7 @@ export abstract class PlayerMechanic {
     if(this._isRunning) {
       window.clearInterval(this._timerHandle);
       this._isRunning = false;
-      console.log(`mechanic ${this.name} stopped`);
+      //console.log(`mechanic ${this.name} stopped`);
     }
   }
 

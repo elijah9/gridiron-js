@@ -38,7 +38,19 @@ export class GameSim {
 
   private _homeHasBall : boolean;
   get homeHasBall() : boolean { return this._homeHasBall; }
-  private set_homeHasBall(homeHasBall : boolean) { this._homeHasBall = homeHasBall; }
+  private set_homeHasBall(homeHasBall : boolean) { 
+    if(this._homeHasBall != homeHasBall) {
+      this._homeHasBall = homeHasBall;
+      
+      // set players to not on field
+      for(let player of this.home.players) {
+        player.onField = false;
+      }
+      for(let player of this.away.players) {
+        player.onField = false;
+      }
+    }
+  }
   
   private get offense() : GameTeam { return this.homeHasBall ? this.home : this.away; }
   private get defense() : GameTeam { return this.homeHasBall ? this.away : this.home; }
@@ -48,7 +60,26 @@ export class GameSim {
   private set_lineOfScrimmage(lineOfScrimmage : number) { 
     this._lineOfScrimmage = lineOfScrimmage;
     this.scrimmageLineChanged.trigger(new YardLineEventArgs(this.lineOfScrimmage));
-   }
+  }
+
+  private _down : number;
+  get down() : number { return this._down; }
+  private set_down(down : number) {
+    if(this._down != down) {
+      if(down > 4 || down < 1) {
+        throw new Error(`Can't have ${down}th down...`);
+      }
+      this._down = down;
+    }
+  }
+
+  private _distance : number;
+  get distance() : number { return this._distance; }
+  private set_distance(distance : number) {
+    if(this._distance != distance) {
+      this._distance = distance;
+    }
+  }
 
   private _firstDownLine : number;
   get firstDownLine() : number { return this._firstDownLine; }
@@ -69,18 +100,11 @@ export class GameSim {
   get isPlayRunning() : boolean { return this._isPlayRunning; }
   private set_isPlayRunning(isPlayRunning : boolean) { this._isPlayRunning = isPlayRunning; }
 
-  private _isHomeOnField : boolean;
-  get isHomeOnField() : boolean { return this._isHomeOnField; }
-  private set_isHomeOnField(isHomeOnField : boolean) { this._isHomeOnField = isHomeOnField; }
-
-  private _isAwayOnField : boolean;
-  get isAwayOnField() : boolean { return this._isAwayOnField; }
-  private set_isAwayOnField(isAwayOnField : boolean) { this._isAwayOnField = isAwayOnField; }
-
   private _currentOffensePlay : OffensePlay;
   private _currentOffenseRoles : Dictionary<DepthRole, GamePlayer>;
   private _currentDefensePlay : Play;
   private _currentDefenseRoles : Dictionary<DepthRole, GamePlayer>;
+  private _playFinishCounter : number;
 
   readonly scrimmageLineChanged = new LiteEvent<YardLineEventArgs>();
   readonly firstDownLineChanged = new LiteEvent<YardLineEventArgs>();
@@ -100,8 +124,8 @@ export class GameSim {
     this._currentOffensePlay = offensePlay;
     this._currentDefensePlay = defensePlay;
 
-    this._currentOffensePlay.playOver.subscribe(this.onPlayFinished);
-    this._currentDefensePlay.playOver.subscribe(this.onPlayFinished);
+    this._currentOffensePlay.playOver.subscribe((play : Play) => this.onPlayFinished(play));
+    this._currentDefensePlay.playOver.subscribe((play : Play) => this.onPlayFinished(play));
 
     let resolver = new DummyPlayRoleResolver();
     this._currentOffenseRoles = resolver.resolveRoles(this._currentOffensePlay, this.offense.players);
@@ -112,8 +136,8 @@ export class GameSim {
 
     this.ball.carrier = this._currentOffenseRoles.getValue(this._currentOffensePlay.snapper);
 
-    this.showPlayers();
     this.set_isPlayActive(true);
+    this._playFinishCounter = 0;
   }
 
   getPlayerTeam(player : GamePlayer) : GameTeam {
@@ -124,11 +148,6 @@ export class GameSim {
     return this.home.team.activeRoster.contains(player.player);
   }
 
-  private showPlayers() {
-    this.set_isHomeOnField(true);
-    this.set_isAwayOnField(true);
-  }
-
   async runCurrentPlay() {
     await this._currentOffensePlay.start(this.ball);
     await this._currentDefensePlay.start(this.ball);
@@ -137,55 +156,69 @@ export class GameSim {
 
   private firstAnd10(home : boolean, yards : number) {
     this.set_homeHasBall(home);
+    this.set_down(1);
     this.set_lineOfScrimmage(yards);
     this.set_firstDownLine(this.lineOfScrimmage + 10);
+    this.set_distance(this.firstDownLine - this.lineOfScrimmage);
+  }
 
+  private onPlayFinished(play? : Play) {
+    if(this._currentOffensePlay != null) {
+      this._currentOffensePlay.stop();
+      this._currentOffensePlay = null;
+    }
+
+    if(this._currentDefensePlay != null) {
+      this._currentDefensePlay.stop();
+      this._currentDefensePlay = null;
+    }
+
+    if(this._currentOffensePlay == null && this._currentDefensePlay == null) {
+      this.set_isPlayRunning(false);
+      this.set_isPlayActive(false);
+      ++this._playFinishCounter;
+
+      if(this._playFinishCounter == 2) {
+        if(this.ball.yards > 0 && this.ball.yards < 100) {
+          this.set_lineOfScrimmage(this.ball.yards);
+          if(this.lineOfScrimmage >= this.firstDownLine) {
+            // first down
+            this.firstAnd10(this.homeHasBall, this.lineOfScrimmage);
+          } else if(this.down == 4) {
+            // turnover on downs
+            this.firstAnd10(!this.homeHasBall, 100 - this.lineOfScrimmage);
+          } else {
+            // next down
+            this.set_down(this.down + 1);
+          }
+          this.set_distance(this.firstDownLine - this.lineOfScrimmage);
+        } else {
+          // either a touchdown or safety...The Choice Is Yours ;-)
+          this.onEndzonePlayFinish();
+        }
+      }
+    }
   }
 
   private onEndzonePlayFinish() {
     this.set_isDriveActive(false);
     if(this.ball.yards >= 100) {
+      // touchdown
       if(this.homeHasBall) {
-        // touchdown
         this.incrementHomeScore(6);
-        this.setupDrive(75, false);
+        this.setupDrive(25, false);
       } else {
-        // safety
-        this.incrementHomeScore(2);
-        this.setupDrive(30, false);
-      } 
-    } else if(this.ball.yards <= 0) {
-      if(!this.homeHasBall) {
-        // touchdown
         this.incrementAwayScore(6);
         this.setupDrive(25, true);
-      } else {
-        // safety
-        this.incrementAwayScore(2);
-        this.setupDrive(70, false);
       }
-    }
-  }
-
-  private onPlayFinished(data? : void) {
-    console.log("play finished");
-    if(this._currentOffensePlay != null && this._currentDefensePlay != null) {
-      this._currentOffensePlay.stop();
-      this._currentDefensePlay.stop();
-      this.set_isPlayRunning(false);
-      this.set_isHomeOnField(false);
-      this.set_isAwayOnField(false);
-      this._currentOffensePlay = null;
-      this._currentDefensePlay = null;
-      this.set_isPlayActive(false);
-
-      if(this.ball.yards > 0 && this.ball.yards < 100) {
-        this.set_lineOfScrimmage(this.ball.yards);
-        if(this.lineOfScrimmage >= this.firstDownLine) {
-          this.set_firstDownLine(Math.min(this.lineOfScrimmage + 10, 100));
-        }
+    } else if(this.ball.yards <= 0) {
+      // safety
+      if(this.homeHasBall) {
+        this.incrementAwayScore(2);
+        this.setupDrive(30, false);
       } else {
-        this.onEndzonePlayFinish();
+        this.incrementHomeScore(2);
+        this.setupDrive(30, true);
       }
     }
   }
@@ -197,4 +230,3 @@ class YardLineEventArgs {
     this.yards = yards;
   }
 }
-

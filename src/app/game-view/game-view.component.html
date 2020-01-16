@@ -1,9 +1,49 @@
 <div>
   <div>
-    <button (click)="setupTestDrive()">Set up drive</button>
-    <button (click)="setupTestPlay()">Set up play</button>
-    <button (click)="runTestPlay()">Run play</button>
+    <button (click)="setupTestDrive()" [disabled]="!gameActive || driveActive">Set up drive</button>
+    <button (click)="setupTestPlay()" [disabled]="!driveActive || playReady">Set up play</button>
+    <button (click)="runTestPlay()" [disabled]="!playReady || playActive">Run play</button>
   </div>
-  <div class="gameView2D" id="gameView2D">
+
+  <!-- scoreboard -->
+  <div>
+    <!-- scores and possession indicators -->
+    <div>
+      <label>Home:</label>
+      <label class="score">
+        {{ game.homeScore }}
+      </label>
+      <label *ngIf="game.homeHasBall">Ball</label>
+    </div>
+    <div>
+      <label>Away:</label>
+      <label class="score">
+        {{ game.awayScore }}
+      </label>
+      <label *ngIf="!game.homeHasBall">Ball</label>
+    </div>
+
+    <!-- other game state -->
+    <div>
+      <!-- down and distance -->
+      <div>
+        <label>Down: </label>
+        <label>
+          {{ game.down }}
+        </label>
+        <label>Distance: </label>
+        <label>
+          {{ game.distance.toFixed(1) }}
+        </label>
+      <label>Ball at: </label>
+      <label>
+        {{ printableYards.toFixed(1) }}
+      </label>
+      </div>
+
+      <!-- clocks -->
+    </div>
   </div>
+
+  <div class="gameView2D" id="gameView2D"></div>
 </div>

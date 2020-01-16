@@ -1,9 +1,11 @@
 import { PlayerMechanic, MechanicCompleteEventArgs } from '../playerMechanic';
 import { PursueBall } from '../pursueBall';
+import { PlayerAttribute } from 'src/game/sim/entities/player';
 
 export class TackleCarrier extends PlayerMechanic {
 
   private static readonly BaseTackleProbability = 1.0;
+  private static readonly BaseTackleThreshold = 0.0;
   
   private _pursuit : PursueBall;
 
@@ -16,7 +18,8 @@ export class TackleCarrier extends PlayerMechanic {
     this._pursuit = new PursueBall();
     this._pursuit.mechanicComplete.subscribe((e? : MechanicCompleteEventArgs) => {
       e.mechanic.stop();
-      if(Math.random() <= TackleCarrier.BaseTackleProbability) {
+      let roll = TackleCarrier.BaseTackleProbability * Math.random() * this._player.player.attributes.getValue(PlayerAttribute.Tackle);
+      if(roll >= TackleCarrier.BaseTackleThreshold) {
         this.done(true);
       }
     });
