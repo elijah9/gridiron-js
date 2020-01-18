@@ -1,7 +1,7 @@
 <div>
   <div>
     <button (click)="setupTestDrive()" [disabled]="!gameActive || driveActive">Set up drive</button>
-    <button (click)="setupTestPlay()" [disabled]="!driveActive || playReady">Set up play</button>
+    <button (click)="setupTestPlay()" [disabled]="!driveActive || playReady || playActive">Set up play</button>
     <button (click)="runTestPlay()" [disabled]="!playReady || playActive">Run play</button>
   </div>
 

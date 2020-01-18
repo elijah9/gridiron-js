@@ -22,25 +22,56 @@ export class TeamBuilder implements IBuilder<ITeam> {
 
 export function genTestTeam() : ITeam {
   let builder = new TeamBuilder("TEST", "rgb(150, 0, 0)", "rgb(0, 0, 0)");
-  builder.withPlayer(genTestPlayer(10, PositionGroup.QB));
-  builder.withPlayer(genTestPlayer(20, PositionGroup.RB));
-  builder.withPlayer(genTestPlayer(50, PositionGroup.C));
+  builder.withPlayer(genTestPlayer(12, PositionGroup.QB));
+  builder.withPlayer(genTestPlayer(26, PositionGroup.RB));
+  builder.withPlayer(genTestPlayer(46, PositionGroup.FB));
+  builder.withPlayer(genTestPlayer(11, PositionGroup.WR));
+  builder.withPlayer(genTestPlayer(10, PositionGroup.WR));
+  builder.withPlayer(genTestPlayer(87, PositionGroup.TE));
+  builder.withPlayer(genTestPlayer(76, PositionGroup.T));
+  builder.withPlayer(genTestPlayer(62, PositionGroup.G));
+  builder.withPlayer(genTestPlayer(60, PositionGroup.C));
+  builder.withPlayer(genTestPlayer(69, PositionGroup.G));
+  builder.withPlayer(genTestPlayer(61, PositionGroup.T));
 
-  let attr30 = new Map<PlayerAttribute, number>();
-  attr30.set(PlayerAttribute.Speed, 1);
-  builder.withPlayer(genTestPlayer(30, PositionGroup.S, attr30));
+  builder.withPlayer(genTestPlayer(93, PositionGroup.DL));
+  builder.withPlayer(genTestPlayer(71, PositionGroup.DL));
+  builder.withPlayer(genTestPlayer(70, PositionGroup.DL));
+  builder.withPlayer(genTestPlayer(98, PositionGroup.EDGE));
+  builder.withPlayer(genTestPlayer(91, PositionGroup.EDGE));
+  builder.withPlayer(genTestPlayer(54, PositionGroup.LB));
+  builder.withPlayer(genTestPlayer(53, PositionGroup.LB));
+  builder.withPlayer(genTestPlayer(24, PositionGroup.CB));
+  builder.withPlayer(genTestPlayer(32, PositionGroup.S));
+  builder.withPlayer(genTestPlayer(23, PositionGroup.S));
+  builder.withPlayer(genTestPlayer(30, PositionGroup.CB));
   return builder.value;
 }
 
 export function genTestTeam2() : ITeam {
   let builder = new TeamBuilder("TEST2", "rgb(0, 0, 175)", "rgb(255, 255, 255)");
-  builder.withPlayer(genTestPlayer(10, PositionGroup.QB));
+  builder.withPlayer(genTestPlayer(12, PositionGroup.QB));
+  builder.withPlayer(genTestPlayer(26, PositionGroup.RB));
+  builder.withPlayer(genTestPlayer(46, PositionGroup.FB));
+  builder.withPlayer(genTestPlayer(11, PositionGroup.WR));
+  builder.withPlayer(genTestPlayer(10, PositionGroup.WR));
+  builder.withPlayer(genTestPlayer(87, PositionGroup.TE));
+  builder.withPlayer(genTestPlayer(76, PositionGroup.T));
+  builder.withPlayer(genTestPlayer(62, PositionGroup.G));
+  builder.withPlayer(genTestPlayer(60, PositionGroup.C));
+  builder.withPlayer(genTestPlayer(69, PositionGroup.G));
+  builder.withPlayer(genTestPlayer(61, PositionGroup.T));
 
-  let attr20 = new Map<PlayerAttribute, number>();
-  attr20.set(PlayerAttribute.Speed, 0.1);
-  builder.withPlayer(genTestPlayer(20, PositionGroup.RB, attr20));
-
-  builder.withPlayer(genTestPlayer(50, PositionGroup.C));
-  builder.withPlayer(genTestPlayer(30, PositionGroup.S));
+  builder.withPlayer(genTestPlayer(93, PositionGroup.DL));
+  builder.withPlayer(genTestPlayer(71, PositionGroup.DL));
+  builder.withPlayer(genTestPlayer(70, PositionGroup.DL));
+  builder.withPlayer(genTestPlayer(98, PositionGroup.EDGE));
+  builder.withPlayer(genTestPlayer(91, PositionGroup.EDGE));
+  builder.withPlayer(genTestPlayer(54, PositionGroup.LB));
+  builder.withPlayer(genTestPlayer(53, PositionGroup.LB));
+  builder.withPlayer(genTestPlayer(24, PositionGroup.CB));
+  builder.withPlayer(genTestPlayer(32, PositionGroup.S));
+  builder.withPlayer(genTestPlayer(23, PositionGroup.S));
+  builder.withPlayer(genTestPlayer(30, PositionGroup.CB));
   return builder.value;
 }

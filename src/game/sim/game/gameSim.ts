@@ -121,7 +121,7 @@ export class GameSim {
 
     this._currentOffensePlay.playOver.subscribe((play : Play) => this.onPlayFinished(play));
     this._currentDefensePlay.playOver.subscribe((play : Play) => this.onPlayFinished(play));
-
+    
     let resolver = new DummyPlayRoleResolver();
     this._currentOffenseRoles = resolver.resolveRoles(this._currentOffensePlay, this.offense.players);
     this._currentDefenseRoles = resolver.resolveRoles(this._currentDefensePlay, this.defense.players);

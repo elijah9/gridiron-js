@@ -57,7 +57,7 @@ export class GameViewComponent implements OnInit {
 
   private _scale;
   private _svg : Svg.Doc;
-  private _players : Map<GamePlayer, Svg.Circle>;
+  private _players : Map<GamePlayer, Svg.G>;
   private _initialized = false;
 
   private readonly _fieldLength = 120;
@@ -117,12 +117,37 @@ export class GameViewComponent implements OnInit {
 
     this._svg = new Svg.Doc("gameView2D").size(this._fieldLength * this._scale, this._fieldWidth * this._scale);
 
+    this.drawField();
+
     console.log("game started");
+  }
+
+  private drawField() {
+    this._svg.rect(this.scaleYards(100), this.scaleOffset(54)).fill("rgb(0,100,0)");
+    this._svg.rect(this.scaleYards(10), this.scaleOffset(54)).move(this.scaleYards(100), 0).fill(this.game.home.team.colorMain);
+
+    for(let i = 0; i <= 100; i += 10) {
+      this.drawFieldMarkings(i);
+    }
+  }
+
+  private drawFieldMarkings(yards : number) {
+    let marking : string;
+    if(yards % 100 == 0) {
+      marking = "G";
+    } else if(yards <= 50) {
+      marking = yards.toString();
+    } else {
+      marking = (100 - yards).toString();
+    }
+    let color = "rgb(255,255,255)";
+    this._svg.text(marking).move(this.scaleYards(yards), this.scaleOffset(-17)).fill(color);
+    this._svg.text(marking).move(this.scaleYards(yards), this.scaleOffset(17)).fill(color);
   }
 
   private initPlayers() {
     // initialize svg objects
-    this._players = new Map<GamePlayer, Svg.Circle>();
+    this._players = new Map<GamePlayer, Svg.G>();
     this.game.home.players.map((player : GamePlayer) => { this.initPlayer(player); });
     this.game.away.players.map((player : GamePlayer) => { this.initPlayer(player); });
   }
@@ -153,11 +178,15 @@ export class GameViewComponent implements OnInit {
     this._players.set(player, this.genPlayerDrawing(player, team));
   }
 
-  private genPlayerDrawing(player : GamePlayer, team : GameTeam) : Svg.Circle {
-    //console.log(`drawing ${player.player.jerseyNumber}`)
+  private genPlayerDrawing(player : GamePlayer, team : GameTeam) : Svg.G {
     let color = team.team.colorMain;
-    return this._svg.circle(this._scale).move(this.scaleYards(player.yards), 
-      this.scaleOffset(player.offset)).fill(color);
+    let number : Svg.Text = this._svg.text(player.player.jerseyNumber.toString());
+    number.move(0, -0.5).fill("rgb(255,255,255)");
+    let playerDrawing : Svg.Circle = this._svg.circle(this._scale).fill(color).scale(1.5);
+    let group : Svg.G = this._svg.group();
+    group.add(playerDrawing);
+    group.add(number);
+    return group.move(this.scaleYards(player.yards), this.scaleOffset(player.offset));
   }
 
   private initBall() {
