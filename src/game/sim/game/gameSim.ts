@@ -1,19 +1,14 @@
-import { Field } from "./field";
 import { GameTeam } from './gameTeam';
 import { Ball } from './ball';
-import { Dictionary } from 'typescript-collections';
 import { LiteEvent } from 'src/game/util/iLiteEvent';
 import { GamePlayer } from './gamePlayer';
 import { DummyPlayRoleResolver } from './playRoleResolver';
 import { OffensePlay } from './plays/offense/offensePlay';
 import { Play } from './plays/play';
 import { DepthRole } from '../positionPlayer';
+import { has } from '../../util/dataStructures';
 
 export class GameSim {
-  private _field : Field;
-  get field() : Field { return this._field; }
-  private set_field(field : Field) { this._field = field; }
-
   private _homeScore : number = 0;
   get homeScore() : number { return this._homeScore; }
   private set_homeScore(homeScore : number) { this._homeScore = homeScore; }
@@ -101,9 +96,9 @@ export class GameSim {
   private set_isPlayRunning(isPlayRunning : boolean) { this._isPlayRunning = isPlayRunning; }
 
   private _currentOffensePlay : OffensePlay;
-  private _currentOffenseRoles : Dictionary<DepthRole, GamePlayer>;
+  private _currentOffenseRoles : Map<DepthRole, GamePlayer>;
   private _currentDefensePlay : Play;
-  private _currentDefenseRoles : Dictionary<DepthRole, GamePlayer>;
+  private _currentDefenseRoles : Map<DepthRole, GamePlayer>;
   private _playFinishCounter : number;
 
   readonly scrimmageLineChanged = new LiteEvent<YardLineEventArgs>();
@@ -134,7 +129,7 @@ export class GameSim {
     this._currentOffensePlay.initialize(this._currentOffenseRoles, this.lineOfScrimmage);
     this._currentDefensePlay.initialize(this._currentDefenseRoles, this.lineOfScrimmage);
 
-    this.ball.carrier = this._currentOffenseRoles.getValue(this._currentOffensePlay.snapper);
+    this.ball.carrier = this._currentOffenseRoles.get(this._currentOffensePlay.snapper);
 
     this.set_isPlayActive(true);
     this._playFinishCounter = 0;
@@ -145,7 +140,7 @@ export class GameSim {
   }
 
   isPlayerHome(player : GamePlayer) : boolean {
-    return this.home.team.activeRoster.contains(player.player);
+    return has(this.home.team.activeRoster, player.player);
   }
 
   async runCurrentPlay() {

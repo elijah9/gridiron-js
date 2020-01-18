@@ -18,7 +18,7 @@ export class TestOffensePlay extends OffensePlay {
         continue;
       }
 
-      let player : GamePlayer = this._players.getValue(role);
+      let player : GamePlayer = this._players.get(role);
       let run = new PlayerRun(new FieldPoint(100, player.offset));
       run.name = player.player.jerseyNumber.toString() + " run";
       this.addMechanic(run);

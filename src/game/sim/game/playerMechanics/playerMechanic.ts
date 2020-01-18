@@ -1,6 +1,5 @@
 import { LiteEvent } from 'src/game/util/iLiteEvent';
 import { GamePlayer } from '../gamePlayer';
-import { Dictionary } from 'typescript-collections';
 import { Ball } from '../ball';
 import { DepthRole } from '../../positionPlayer';
 
@@ -13,12 +12,12 @@ export abstract class PlayerMechanic {
   readonly mechanicComplete = new LiteEvent<MechanicCompleteEventArgs>();
 
   protected _player : GamePlayer;
-  protected _players : Dictionary<DepthRole, GamePlayer>;
+  protected _players : Map<DepthRole, GamePlayer>;
   protected _ball : Ball;
   protected _isRunning = false;
   private _timerHandle : number;
 
-  async start(player : GamePlayer, players : Dictionary<DepthRole, GamePlayer>, ball : Ball) {
+  async start(player : GamePlayer, players : Map<DepthRole, GamePlayer>, ball : Ball) {
     if(!this._isRunning) {
       this._player = player;
       this._players = players;

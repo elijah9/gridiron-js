@@ -1,4 +1,3 @@
-import { Dictionary } from "typescript-collections"
 import { PositionGroup } from '../positionPlayer';
 
 export enum PlayerAttribute {
@@ -8,7 +7,7 @@ export enum PlayerAttribute {
 export interface IPlayer {
   jerseyNumber : number;
   primaryPosition : PositionGroup;
-  readonly attributes : Dictionary<PlayerAttribute, number>;
+  readonly attributes : Map<PlayerAttribute, number>;
 }
 
 export class Player implements IPlayer {
@@ -29,7 +28,7 @@ export class Player implements IPlayer {
     this._primaryPosition = v;
   }
   
-  public readonly attributes : Dictionary<PlayerAttribute, number> = new Dictionary<PlayerAttribute, number>();
+  public readonly attributes : Map<PlayerAttribute, number> = new Map<PlayerAttribute, number>();
 }
 
 

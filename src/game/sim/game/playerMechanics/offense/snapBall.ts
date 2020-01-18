@@ -16,7 +16,7 @@ export class SnapBall extends PlayerMechanic {
 
     for(let position of this._players.keys()) {
       if(position.role == Position.QB) {
-        this._ball.carrier = this._players.getValue(position);
+        this._ball.carrier = this._players.get(position);
         this.done(false);
       }
     }

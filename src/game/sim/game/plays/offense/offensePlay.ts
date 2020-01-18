@@ -19,7 +19,7 @@ export abstract class OffensePlay extends Play {
 
     let isSnapping = false;
     this.addMechanic(snapperMechanic, () => isSnapping = false);
-    await snapperMechanic.start(this._players.getValue(this.snapper), this._players, ball);
+    await snapperMechanic.start(this._players.get(this.snapper), this._players, ball);
     waitFor(() => !isSnapping, () => this.runOffensePlay(ball), PlayerMechanic.DeltaT);
   }
 

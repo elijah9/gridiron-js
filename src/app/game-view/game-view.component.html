@@ -8,14 +8,14 @@
   <!-- scoreboard -->
   <div>
     <!-- scores and possession indicators -->
-    <div>
+    <div *ngIf="this.gameActive">
       <label>Home:</label>
       <label class="score">
         {{ game.homeScore }}
       </label>
       <label *ngIf="game.homeHasBall">Ball</label>
     </div>
-    <div>
+    <div *ngIf="this.gameActive">
       <label>Away:</label>
       <label class="score">
         {{ game.awayScore }}
@@ -26,17 +26,17 @@
     <!-- other game state -->
     <div>
       <!-- down and distance -->
-      <div>
+      <div *ngIf="this.gameActive">
         <label>Down: </label>
         <label>
           {{ game.down }}
         </label>
         <label>Distance: </label>
-        <label>
+        <label *ngIf="!isType(game.distance, 'undefined')">
           {{ game.distance.toFixed(1) }}
         </label>
       <label>Ball at: </label>
-      <label>
+      <label *ngIf="!isNaN(printableYards)">
         {{ printableYards.toFixed(1) }}
       </label>
       </div>

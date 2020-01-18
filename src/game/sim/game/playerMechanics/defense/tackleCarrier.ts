@@ -18,7 +18,7 @@ export class TackleCarrier extends PlayerMechanic {
     this._pursuit = new PursueBall();
     this._pursuit.mechanicComplete.subscribe((e? : MechanicCompleteEventArgs) => {
       e.mechanic.stop();
-      let roll = TackleCarrier.BaseTackleProbability * Math.random() * this._player.player.attributes.getValue(PlayerAttribute.Tackle);
+      let roll = TackleCarrier.BaseTackleProbability * Math.random() * this._player.player.attributes.get(PlayerAttribute.Tackle);
       if(roll >= TackleCarrier.BaseTackleThreshold) {
         this.done(true);
       }

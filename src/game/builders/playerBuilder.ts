@@ -1,6 +1,5 @@
 import { IPlayer, Player, PlayerAttribute } from "../sim/entities/player";
 import { PositionGroup } from '../sim/positionPlayer';
-import { Dictionary } from 'typescript-collections';
 
 export class PlayerBuilder implements IBuilder<IPlayer> {
   readonly value : IPlayer;
@@ -18,12 +17,12 @@ export class PlayerBuilder implements IBuilder<IPlayer> {
   }
 
   withAttribute(attribute : PlayerAttribute, value : number) {
-    this.value.attributes.setValue(attribute, value);
+    this.value.attributes.set(attribute, value);
   }
 }
 
 export function genTestPlayer(num : number, position : PositionGroup, 
-  attributes : Dictionary<PlayerAttribute, number> = new Dictionary<PlayerAttribute, number>()) : IPlayer {
+  attributes : Map<PlayerAttribute, number> = new Map<PlayerAttribute, number>()) : IPlayer {
     
   let builder = new PlayerBuilder();
   builder.withNumber(num);
@@ -31,7 +30,7 @@ export function genTestPlayer(num : number, position : PositionGroup,
   
   for(let attributeStr in PlayerAttribute) {
     let attribute = <any>PlayerAttribute[attributeStr];
-    let attributeVal = attributes.containsKey(attribute) ? attributes.getValue(attribute) : Math.random();
+    let attributeVal = attributes.has(attribute) ? attributes.get(attribute) : Math.random();
     builder.withAttribute(attribute, attributeVal);
   }
   return builder.value;

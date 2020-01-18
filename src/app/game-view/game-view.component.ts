@@ -6,7 +6,6 @@ import { GamePlayer, OnFieldEventArgs } from '../../game/sim/game/gamePlayer';
 import { GameTeam } from '../../game/sim/game/gameTeam';
 import { TestOffensePlay } from '../../game/sim/game/plays/offense/testOffensePlay';
 import { TestDefensePlay } from 'src/game/sim/game/plays/defense/testDefensePlay';
-import { Dictionary } from 'typescript-collections';
 import { FieldPointEventArgs, IFieldPoint } from '../../game/sim/game/iFieldPoint';
 
 @Component({
@@ -45,6 +44,9 @@ export class GameViewComponent implements OnInit {
   }
 
   get printableYards() : number {
+    if(!this.gameActive) {
+      return Number.NaN;
+    }
     let los = this.game.lineOfScrimmage;
     if(los >= 50) {
       return 100 - los;
@@ -53,18 +55,33 @@ export class GameViewComponent implements OnInit {
     }
   }
 
+  private _scale;
   private _svg : Svg.Doc;
   private _players : Map<GamePlayer, Svg.Circle>;
   private _initialized = false;
 
-  private readonly _scale = 12;
   private readonly _fieldLength = 120;
   private readonly _fieldWidth = 160 / 3;
   private readonly _offsetYards = this._fieldWidth / 2;
   
-  constructor() { }
+  constructor() { 
+    window.addEventListener("resize", () => this.setScale());
+    this.setScale();
+  }
 
   ngOnInit() { }
+
+  setScale() {
+    let scaleFactor = 0.7;
+    let w : number = document.documentElement.clientWidth * scaleFactor;
+    let h : number = document.documentElement.clientHeight * scaleFactor;
+    let v : number = w <= h ? w : h;
+    this._scale = w <= h ? w / this._fieldLength : h / this._fieldWidth;
+    console.log("scaling to " + this._scale);
+    if(typeof(this._svg) !== "undefined") {
+      this._svg.scale(this._scale, this._scale);
+    }
+  }
 
   setupTestDrive() {
     this.game.setupDrive(25, true);
@@ -96,10 +113,10 @@ export class GameViewComponent implements OnInit {
 
   private startGame() {
     this.set_game(genTestGame());
+    this.gameActive = true;
 
     this._svg = new Svg.Doc("gameView2D").size(this._fieldLength * this._scale, this._fieldWidth * this._scale);
 
-    this.gameActive = true;
     console.log("game started");
   }
 
@@ -165,5 +182,13 @@ export class GameViewComponent implements OnInit {
 
   private scaleOffset(offset : number) : number {
     return (offset + this._offsetYards) * this._scale;
+  }
+
+  isType(value : any, type : string) : boolean {
+    return typeof(value) === type;
+  }
+
+  isNaN(value : number) : boolean {
+    return isNaN(value);
   }
 }

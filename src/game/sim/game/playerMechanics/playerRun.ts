@@ -31,7 +31,7 @@ export class PlayerRun extends PlayerMechanic {
 
   onTick() { 
     // calculate speed and distance
-    let speed : number = this._player.player.attributes.getValue(PlayerAttribute.Speed);
+    let speed : number = this._player.player.attributes.get(PlayerAttribute.Speed);
     let scaleFactor : number = PlayerMechanic.DeltaT * 
       (PlayerRun.MinSpeed + speed * (PlayerRun.MaxSpeed - PlayerRun.MinSpeed));
     let dPos : Vector2 = this._player.distanceVec(this._destination);

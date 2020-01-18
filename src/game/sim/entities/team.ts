@@ -1,9 +1,8 @@
 import { IPlayer } from "./player";
-import { LinkedList } from 'typescript-collections';
 
 export interface ITeam {
   readonly nameShort : string;
-  readonly activeRoster : LinkedList<IPlayer>;
+  readonly activeRoster : IPlayer[];
   readonly colorMain : string;
   readonly colorSec : string;
 }
@@ -18,7 +17,7 @@ export class Team implements ITeam {
     this._nameShort = v;
   }
   
-  readonly activeRoster : LinkedList<IPlayer> = new LinkedList<IPlayer>();
+  readonly activeRoster : IPlayer[] = [];
   
   private _colorMain : string;
   get colorMain() : string {
