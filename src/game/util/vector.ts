@@ -4,14 +4,14 @@ interface IVector {
 }
 
 abstract class Vector implements IVector {
-  public readonly length : number;
-  public abstract get(i : number) : number;
+  readonly length : number;
+  abstract get(i : number) : number;
 }
 
 export class Vector2 extends Vector {
-  public readonly x : number;
-  public readonly y : number;
-  public get length() : number {
+  readonly x : number;
+  readonly y : number;
+  get length() : number {
     return Math.sqrt(Math.pow(this.x, 2) + Math.pow(this.y, 2));
   }
 
@@ -21,7 +21,7 @@ export class Vector2 extends Vector {
     this.y = y;
   }
 
-  public get(i: number) : number {
+  get(i: number) : number {
     if(i == 0) {
       return this.x;
     } else if(i == 1) {
@@ -31,16 +31,20 @@ export class Vector2 extends Vector {
     }
   }
 
-  public normalize() : Vector2 {
+  normalize() : Vector2 {
     let length = this.length;
     return new Vector2(this.x / length, this.y / length);
   }
 
-  public multiply(m : number) : Vector2 {
+  add(v : Vector2) : Vector2 {
+    return new Vector2(this.x + v.x, this.y + v.y);
+  }
+
+  multiply(m : number) : Vector2 {
     return new Vector2(this.x * m, this.y * m);
   }
 
-  public divide(d : number) : Vector2 {
+  divide(d : number) : Vector2 {
     return new Vector2(this.x / d, this.y / d);
   }
 }

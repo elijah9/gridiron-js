@@ -7,6 +7,9 @@ import { GameTeam } from '../../game/sim/game/gameTeam';
 import { TestOffensePlay } from '../../game/sim/game/plays/offense/testOffensePlay';
 import { TestDefensePlay } from 'src/game/sim/game/plays/defense/testDefensePlay';
 import { FieldPointEventArgs, IFieldPoint } from '../../game/sim/game/iFieldPoint';
+import { Logger } from '../../game/util/logger';
+import { fieldLength, fieldWidth, fieldOffsetFromTop } from '../../game/sim/game/field';
+import { VisionCone } from '../../game/sim/game/playerMechanics/visionCone';
 
 @Component({
   selector: 'app-game-view',
@@ -55,29 +58,27 @@ export class GameViewComponent implements OnInit {
     }
   }
 
+  get debugLog() : string { return Logger.value; }
+
   private _scale;
   private _svg : Svg.Doc;
   private _players : Map<GamePlayer, Svg.G>;
+  private _cones : Map<GamePlayer, Svg.PolyLine>;
   private _initialized = false;
-
-  private readonly _fieldLength = 120;
-  private readonly _fieldWidth = 160 / 3;
-  private readonly _offsetYards = this._fieldWidth / 2;
   
-  constructor() { 
+  constructor() { }
+
+  ngOnInit() { 
     window.addEventListener("resize", () => this.setScale());
     this.setScale();
   }
 
-  ngOnInit() { }
-
   setScale() {
-    let scaleFactor = 0.7;
-    let w : number = document.documentElement.clientWidth * scaleFactor;
-    let h : number = document.documentElement.clientHeight * scaleFactor;
-    let v : number = w <= h ? w : h;
-    this._scale = w <= h ? w / this._fieldLength : h / this._fieldWidth;
-    console.log("scaling to " + this._scale);
+    let scaleFactor = 1.0;
+    let w : number = document.getElementById("gameView2D").offsetWidth * scaleFactor;
+    let h : number = document.getElementById("gameView2D").offsetHeight * scaleFactor;
+    this._scale = w <= h ? w / fieldLength : h / fieldWidth;
+    Logger.log("scaling to " + this._scale);
     if(typeof(this._svg) !== "undefined") {
       this._svg.scale(this._scale, this._scale);
     }
@@ -87,7 +88,7 @@ export class GameViewComponent implements OnInit {
     this.game.setupDrive(25, true);
 
     this.driveActive = true;
-    console.log("drive initialized");
+    Logger.log("drive initialized");
   }
 
   setupTestPlay() {
@@ -100,7 +101,7 @@ export class GameViewComponent implements OnInit {
     this.game.setupPlay(new TestOffensePlay(), new TestDefensePlay());
 
     this.playReady = true;
-    console.log("play initialized");
+    Logger.log("play initialized");
   }
 
   async runTestPlay() {
@@ -115,15 +116,16 @@ export class GameViewComponent implements OnInit {
     this.set_game(genTestGame());
     this.gameActive = true;
 
-    this._svg = new Svg.Doc("gameView2D").size(this._fieldLength * this._scale, this._fieldWidth * this._scale);
+    this._svg = new Svg.Doc("gameView2D").size(fieldLength * this._scale, fieldWidth * this._scale);
 
     this.drawField();
 
-    console.log("game started");
+    Logger.log("game started");
   }
 
   private drawField() {
-    this._svg.rect(this.scaleYards(100), this.scaleOffset(54)).fill("rgb(0,100,0)");
+    this._svg.rect(this.scaleYards(10), this.scaleOffset(54)).move(this.scaleYards(-10), 0).fill(this.game.away.team.colorMain);
+    this._svg.rect(this.scaleYards(100), this.scaleOffset(54)).move(this.scaleYards(0), 0).fill("rgb(0,100,0)");
     this._svg.rect(this.scaleYards(10), this.scaleOffset(54)).move(this.scaleYards(100), 0).fill(this.game.home.team.colorMain);
 
     for(let i = 0; i <= 100; i += 10) {
@@ -148,6 +150,7 @@ export class GameViewComponent implements OnInit {
   private initPlayers() {
     // initialize svg objects
     this._players = new Map<GamePlayer, Svg.G>();
+    this._cones = new Map<GamePlayer, Svg.PolyLine>();
     this.game.home.players.map((player : GamePlayer) => { this.initPlayer(player); });
     this.game.away.players.map((player : GamePlayer) => { this.initPlayer(player); });
   }
@@ -170,6 +173,8 @@ export class GameViewComponent implements OnInit {
       player.positionChanged.unsubscribe(moveHandler)
       this._svg.removeElement(this._players.get(player));
       this._players.delete(player);
+      this._cones.get(player).remove();
+      this._cones.delete(player);
     }
   }
 
@@ -179,10 +184,12 @@ export class GameViewComponent implements OnInit {
   }
 
   private genPlayerDrawing(player : GamePlayer, team : GameTeam) : Svg.G {
-    let color = team.team.colorMain;
+    // jersey number, background circle
     let number : Svg.Text = this._svg.text(player.player.jerseyNumber.toString());
     number.move(0, -0.5).fill("rgb(255,255,255)");
-    let playerDrawing : Svg.Circle = this._svg.circle(this._scale).fill(color).scale(1.5);
+    let playerDrawing : Svg.Circle = this._svg.circle(this._scale).fill(team.team.colorMain).scale(1.5);
+    
+    // put everything together and draw
     let group : Svg.G = this._svg.group();
     group.add(playerDrawing);
     group.add(number);
@@ -202,15 +209,35 @@ export class GameViewComponent implements OnInit {
   private movePlayer(player : GamePlayer, pos : IFieldPoint) {
     try {
       this._players.get(player).move(this.scaleYards(pos.yards), this.scaleOffset(pos.offset));
+
+      if(player.showVisionCone) {
+        let visionCone : VisionCone = player.visionCone;
+        let playerPos = [this.scaleYards(player.yards), this.scaleOffset(player.offset)];
+        let leftPos = [
+          this.scaleYards(visionCone.leftIntersection.yards), 
+          this.scaleOffset(visionCone.leftIntersection.offset)
+        ];
+        let rightPos = [
+          this.scaleYards(visionCone.rightIntersection.yards), 
+          this.scaleOffset(visionCone.rightIntersection.offset)
+        ];
+
+        if(this._cones.has(player)) {
+          this._cones.get(player).remove();
+          this._cones.delete(player);
+        }
+        this._cones.set(player, this._svg.polyline([playerPos, leftPos, rightPos, playerPos])
+          .fill("none").stroke({width: 1, color: "rgb(255,255,255)"}));
+      }
     } catch(TypeError) { }
   }
 
   private scaleYards(yards : number) : number {
-    return yards * this._scale;
+    return (yards + 10) * this._scale;
   }
 
   private scaleOffset(offset : number) : number {
-    return (offset + this._offsetYards) * this._scale;
+    return (offset + fieldOffsetFromTop) * this._scale;
   }
 
   isType(value : any, type : string) : boolean {

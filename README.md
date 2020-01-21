@@ -11,23 +11,23 @@ mostly so I can learn web development but would be nice if this became real
 * a 2D football CPU vs CPU simulator (NFL ruleset)
 * Angular/TypeScript
 * vector based graphics using Svg.JS
-* scraping engine for teams, stats (to display but also to generate player ratings)
+* data engine for teams, stats (to display but also to generate player ratings)
+* * web scraping module
 
 # to do list
-* game event log for play outcome
+* vision cone "mechanic" (not a PlayerMechanic subclass)
 * run block mechanic
 * make real (but still basic) 11 on 11 plays
-* get some work done on scraping engine
+* get some work done on data engine
+* game clock
 * get app working via Github.io again
 
 # scraping engine steps
-since this is so big, gonna get its own section
-* set up database structure using IndexedDB
-* * Team, TeamRoster, Player, PlayerAttributes
-* set up data access layer in TypeScript
-* * teams repository class
-* * DB model classes for tables
+* teams repository class
 * write scraper for team info rosters using Wikipedia parameterized by year
+* create team page
+* * form for info
+* * CSV upload feature for roster
 
 # bugs to fix
 * touchdown doesn't terminate play

@@ -1,7 +1,7 @@
 import { PositionGroup } from '../positionPlayer';
 
 export enum PlayerAttribute {
-  Speed, Tackle
+  Speed, Tackle, Vision, Awareness, Situational
 }
 
 export interface IPlayer {
@@ -11,7 +11,6 @@ export interface IPlayer {
 }
 
 export class Player implements IPlayer {
-
   private _jerseyNumber : number;
   public get jerseyNumber() : number {
     return this._jerseyNumber;
@@ -30,5 +29,3 @@ export class Player implements IPlayer {
   
   public readonly attributes : Map<PlayerAttribute, number> = new Map<PlayerAttribute, number>();
 }
-
-

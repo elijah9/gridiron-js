@@ -1,49 +1,50 @@
 <div>
-  <div>
-    <button (click)="setupTestDrive()" [disabled]="!gameActive || driveActive">Set up drive</button>
-    <button (click)="setupTestPlay()" [disabled]="!driveActive || playReady || playActive">Set up play</button>
-    <button (click)="runTestPlay()" [disabled]="!playReady || playActive">Run play</button>
+  <button (click)="setupTestDrive()" [disabled]="!gameActive || driveActive">Set up drive</button>
+  <button (click)="setupTestPlay()" [disabled]="!driveActive || playReady || playActive">Set up play</button>
+  <button (click)="runTestPlay()" [disabled]="!playReady || playActive">Run play</button>
+</div>
+
+<!-- scoreboard -->
+<div>
+  <!-- scores and possession indicators -->
+  <div *ngIf="this.gameActive">
+    <label>Home:</label>
+    <label class="score">
+      {{ game.homeScore }}
+    </label>
+    <label *ngIf="game.homeHasBall">Ball</label>
+  </div>
+  <div *ngIf="this.gameActive">
+    <label>Away:</label>
+    <label class="score">
+      {{ game.awayScore }}
+    </label>
+    <label *ngIf="!game.homeHasBall">Ball</label>
   </div>
 
-  <!-- scoreboard -->
+  <!-- other game state -->
   <div>
-    <!-- scores and possession indicators -->
+    <!-- down and distance -->
     <div *ngIf="this.gameActive">
-      <label>Home:</label>
-      <label class="score">
-        {{ game.homeScore }}
+      <label>Down: </label>
+      <label>
+        {{ game.down }}
       </label>
-      <label *ngIf="game.homeHasBall">Ball</label>
-    </div>
-    <div *ngIf="this.gameActive">
-      <label>Away:</label>
-      <label class="score">
-        {{ game.awayScore }}
+      <label>Distance: </label>
+      <label *ngIf="!isType(game.distance, 'undefined')">
+        {{ game.distance.toFixed(1) }}
       </label>
-      <label *ngIf="!game.homeHasBall">Ball</label>
+    <label>Ball at: </label>
+    <label *ngIf="!isNaN(printableYards)">
+      {{ printableYards.toFixed(1) }}
+    </label>
     </div>
 
-    <!-- other game state -->
-    <div>
-      <!-- down and distance -->
-      <div *ngIf="this.gameActive">
-        <label>Down: </label>
-        <label>
-          {{ game.down }}
-        </label>
-        <label>Distance: </label>
-        <label *ngIf="!isType(game.distance, 'undefined')">
-          {{ game.distance.toFixed(1) }}
-        </label>
-      <label>Ball at: </label>
-      <label *ngIf="!isNaN(printableYards)">
-        {{ printableYards.toFixed(1) }}
-      </label>
-      </div>
-
-      <!-- clocks -->
-    </div>
+    <!-- clocks -->
   </div>
+</div>
 
+<div class="game">
   <div class="gameView2D" id="gameView2D"></div>
+  <textarea class="debugLog" [textContent]="this.debugLog" disabled="true"></textarea>
 </div>

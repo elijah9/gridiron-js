@@ -126,8 +126,8 @@ export class GameSim {
     this._currentOffenseRoles = resolver.resolveRoles(this._currentOffensePlay, this.offense.players);
     this._currentDefenseRoles = resolver.resolveRoles(this._currentDefensePlay, this.defense.players);
 
-    this._currentOffensePlay.initialize(this._currentOffenseRoles, this.lineOfScrimmage);
-    this._currentDefensePlay.initialize(this._currentDefenseRoles, this.lineOfScrimmage);
+    this._currentOffensePlay.initialize(this._currentOffenseRoles, this._currentDefenseRoles, this.lineOfScrimmage);
+    this._currentDefensePlay.initialize(this._currentDefenseRoles, this._currentDefenseRoles, this.lineOfScrimmage);
 
     this.ball.carrier = this._currentOffenseRoles.get(this._currentOffensePlay.snapper);
 

@@ -7,6 +7,7 @@ export interface IFieldPoint {
   readonly offset : number;
   distanceVec(point : IFieldPoint) : Vector2;
   distance(point : IFieldPoint) : number;
+  toString() : string;
 }
 
 export interface IDirectionalFieldPoint extends IFieldPoint {
@@ -46,6 +47,10 @@ export class FieldPoint implements IFieldPoint {
     return this.distanceVec(point).length;
   }
 
+  toString() : string {
+    return `[${this.yards}, ${this.offset}]`;
+  }
+
   protected alertPositionChange() {
     this.positionChanged.trigger(new FieldPointEventArgs(this));
   }
@@ -82,7 +87,6 @@ export class DirectionalFieldPoint extends FieldPoint implements IDirectionalFie
     let threshold : number = MathUtils.DegreesToRadians * DirectionalFieldPoint.DirectionThreshold;
     return Math.abs(this.getAngleBetween(point)) < threshold;
   }
-  
 }
 
 export class FieldPointEventArgs {

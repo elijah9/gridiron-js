@@ -3,6 +3,7 @@ import { DirectionalFieldPoint } from './iFieldPoint';
 import { genTestPlayer } from '../../builders/playerBuilder';
 import { PositionGroup } from '../positionPlayer';
 import { LiteEvent } from 'src/game/util/iLiteEvent';
+import { VisionCone } from './playerMechanics/visionCone';
 
 export class GamePlayer extends DirectionalFieldPoint {
 
@@ -16,6 +17,12 @@ export class GamePlayer extends DirectionalFieldPoint {
     this._onField = v;
     this.onFieldChanged.trigger(new OnFieldEventArgs(v));
   }
+
+  get visionCone() : VisionCone {
+    return new VisionCone(this);
+  }
+
+  showVisionCone = false;
 
   readonly onFieldChanged = new LiteEvent<OnFieldEventArgs>();
   

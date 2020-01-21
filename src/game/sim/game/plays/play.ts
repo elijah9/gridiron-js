@@ -10,7 +10,8 @@ export abstract class Play {
 
   readonly initialPositions = new Map<DepthRole, IDirectionalFieldPoint>();
 
-  protected _players : Map<DepthRole, GamePlayer>;
+  protected _team : Map<DepthRole, GamePlayer>;
+  protected _opp : Map<DepthRole, GamePlayer>;
   private _activeMechanics : PlayerMechanic[];
   private _isRunning = false;
 
@@ -25,11 +26,12 @@ export abstract class Play {
     return role;
   }
 
-  initialize(players : Map<DepthRole, GamePlayer>, startLine : number) {
-    this._players = players;
+  initialize(team : Map<DepthRole, GamePlayer>, opp : Map<DepthRole, GamePlayer>, startLine : number) {
+    this._team = team;
+    this._opp = opp;
     this._activeMechanics = [];
     this.initializePlayerLocations(startLine);
-    for(let player of players.values()) {
+    for(let player of team.values()) {
       player.onField = true;
     }
   }
@@ -54,7 +56,7 @@ export abstract class Play {
   private initializePlayerLocations(startLine : number) {
     for(let role of this.initialPositions.keys()) {
       let point : IDirectionalFieldPoint = this.initialPositions.get(role);
-      let player : GamePlayer = this._players.get(role);
+      let player : GamePlayer = this._team.get(role);
       player.set_yards(point.yards + startLine);
       player.set_offset(point.offset);
       player.angle = point.angle;
@@ -67,8 +69,8 @@ export abstract class Play {
   }
 
   stop() {
-    // console.log("stopping play");
-    // console.log(this);
+    // Logger.log("stopping play");
+    // Logger.log(this);
     this._activeMechanics.forEach(mechanic => {
       mechanic.stop();
     });

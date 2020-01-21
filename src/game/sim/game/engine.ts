@@ -1,3 +1,4 @@
+import { Logger } from '../../util/logger';
 export class Engine {
   
   private _elapsed : number = 0;
@@ -34,7 +35,7 @@ export class Engine {
 
     // roll back if 3 or more frames behind
     if(this._elapsed >= this._dt * 3) {
-      console.log("rolling back frames...");
+      Logger.log("rolling back frames...");
       this._elapsed = this._dt;
     }
 

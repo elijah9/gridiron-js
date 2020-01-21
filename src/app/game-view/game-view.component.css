@@ -1,5 +1,20 @@
-.gameView2D {
-  width: 100%;
+.game {
   margin: auto;
-  border: 0.675em solid black;
+  height: 700px;
+}
+
+.gameView2D {
+  width: 75%;
+  height: 100%;
+  margin: auto;
+  border: 0.0675em solid black;
+  float: left;
+}
+
+.debugLog {
+  width: 20%;
+  height: 100%;
+  border: 0.0675 solid black;
+  padding: 0.0675em;
+  float: right;
 }

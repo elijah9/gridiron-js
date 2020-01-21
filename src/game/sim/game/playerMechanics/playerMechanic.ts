@@ -12,20 +12,24 @@ export abstract class PlayerMechanic {
   readonly mechanicComplete = new LiteEvent<MechanicCompleteEventArgs>();
 
   protected _player : GamePlayer;
-  protected _players : Map<DepthRole, GamePlayer>;
+  protected _team : Map<DepthRole, GamePlayer>;
+  protected _opp : Map<DepthRole, GamePlayer>;
   protected _ball : Ball;
   protected _isRunning = false;
   private _timerHandle : number;
 
-  async start(player : GamePlayer, players : Map<DepthRole, GamePlayer>, ball : Ball) {
+  async start(player : GamePlayer, team : Map<DepthRole, GamePlayer>, 
+    opp : Map<DepthRole, GamePlayer>, ball : Ball) {
+
     if(!this._isRunning) {
       this._player = player;
-      this._players = players;
+      this._team = team;
+      this._opp = opp;
       this._ball = ball;
 
       this.onStart();
 
-      //console.log(`mechanic ${this.name} starting...`);
+      //Logger.log(`mechanic ${this.name} starting...`);
       this._isRunning = true;
       this.startMechanic();
     }
@@ -35,7 +39,7 @@ export abstract class PlayerMechanic {
     if(this._isRunning) {
       window.clearInterval(this._timerHandle);
       this._isRunning = false;
-      //console.log(`mechanic ${this.name} stopped`);
+      //Logger.log(`mechanic ${this.name} stopped`);
     }
   }
 
