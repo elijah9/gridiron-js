@@ -1,4 +1,7 @@
 import { Logger } from '../game/util/logger';
+import { waitFor } from '../game/util/threadUtils';
+import { openDB, deleteDB, wrap, unwrap, IDBPDatabase } from 'idb';
+
 export enum DBTableNames {
   team = "team", 
   player = "player", 
@@ -10,71 +13,49 @@ export enum DBTableNames {
 export class BaseRepository {
   protected static readonly dbName = "gridiron-js";
 
-  static initDB() {
+  static async initDB() {
     if(!window.indexedDB) {
       Logger.log("IndexedDB isn't working");
     }
-  
-    let request : IDBOpenDBRequest = BaseRepository.createDBRequest();
-    request.onupgradeneeded = (event : IDBVersionChangeEvent) => {
-      let db : IDBDatabase = request.result;
-  
-      // create object stores
-      if(!db.objectStoreNames.contains("team")) {
-        db.createObjectStore("team", {keyPath: "teamID"});
+
+    await openDB(this.dbName, 1, {
+      upgrade(db, oldVersion, newVersion, transaction) {
+        // create object stores
+        if(!db.objectStoreNames.contains(DBTableNames.team)) {
+          db.createObjectStore(DBTableNames.team, { keyPath: "teamID", autoIncrement: true });
+        }
+        if(!db.objectStoreNames.contains(DBTableNames.player)) {
+          db.createObjectStore(DBTableNames.player, { keyPath: "playerID", autoIncrement: true });
+        }
+        if(!db.objectStoreNames.contains(DBTableNames.playerRoster)) {
+          db.createObjectStore(DBTableNames.playerRoster, { keyPath: "playerRosterID", autoIncrement: true });
+        }
+        if(!db.objectStoreNames.contains(DBTableNames.position)) {
+          db.createObjectStore(DBTableNames.position, { keyPath: "positionID", autoIncrement: true });
+        }
+        if(!db.objectStoreNames.contains(DBTableNames.positionGroup)) {
+          db.createObjectStore(DBTableNames.positionGroup, { keyPath: "positionGroupID", autoIncrement: true });
+        }
       }
-
-      if(!db.objectStoreNames.contains('player')) {
-        db.createObjectStore('player', {keyPath: 'playerID'});
-      }
-
-      if(!db.objectStoreNames.contains('playerRoster')) {
-        db.createObjectStore('playerRoster', {keyPath: 'playerRosterID', autoIncrement: true});
-      }
-
-      if(!db.objectStoreNames.contains('position')) {
-        db.createObjectStore('position', {keyPath: 'positionID'});
-      }
-
-      if(!db.objectStoreNames.contains('positionGroup')) {
-        db.createObjectStore('positionGroup', {keyPath: 'positionGroupID'});
-      }
-    };
+    });
   }
 
-  protected static getDB() : IDBDatabase {
-    return BaseRepository.createDBRequest().result;
+  static async resetDB() {
+    window.indexedDB.deleteDatabase(this.dbName);
+    await this.initDB();
   }
 
-  protected static createDBRequest() : IDBOpenDBRequest {
-    return window.indexedDB.open(BaseRepository.dbName);
+  protected static async getDB() : Promise<IDBPDatabase<unknown>> {
+    return await openDB(this.dbName, 1);
   }
 
-  private static createTransaction(tableName : DBTableNames, write = false) : IDBTransaction {
-    let db : IDBDatabase = BaseRepository.getDB();
-    return db.transaction(tableName, write ? "readwrite" : "readonly");
+  protected static async write(tableName : DBTableNames, data : any) {
+    const db : IDBPDatabase<unknown> = await BaseRepository.getDB();
+    db.put(tableName, data);
   }
 
-  private static executeTransaction(request : IDBRequest) : any {
-    request.onsuccess = () => { 
-      return request.result; 
-    };
-    request.onerror = () => {
-      throw new Error("IndexedDB transaction failed :(");
-    }
-  }
-
-  protected static write(tableName : DBTableNames, data : any) {
-    let transaction : IDBTransaction = BaseRepository.createTransaction(tableName, true);
-    let store : IDBObjectStore = transaction.objectStore(tableName);
-    let request : IDBRequest = store.add(data);
-    this.executeTransaction(request);
-  }
-
-  protected static readAll(tableName : DBTableNames) {
-    let transaction : IDBTransaction = BaseRepository.createTransaction(tableName, true);
-    let store : IDBObjectStore = transaction.objectStore(tableName);
-    let request : IDBRequest = store.getAll();
-    this.executeTransaction(request);
+  protected static async readAll(tableName : DBTableNames) : Promise<any[]> {
+    const db : IDBPDatabase<unknown> = await BaseRepository.getDB();
+    return await db.getAll(tableName);
   }
 }

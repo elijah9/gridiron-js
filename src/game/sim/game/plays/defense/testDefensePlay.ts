@@ -16,6 +16,6 @@ export class TestDefensePlay extends Play {
 
     let tackle = new TackleCarrier();
     this.addMechanic(tackle);
-    await tackle.start(this._team.values().next().value, this._team, this._opp, ball);
+    await tackle.start(this._team.values().next().value, this._team, this._opp, ball, true);
   }
 }

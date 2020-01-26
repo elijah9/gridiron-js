@@ -30,14 +30,14 @@ export class TestOffensePlay extends OffensePlay {
           let run = new PlayerRun(new FieldPoint(100, qb.offset));
           run.name = qb.player.jerseyNumber.toString() + " run";
           this.addMechanic(run);
-          await run.start(qb, this._team, this._opp, ball);
+          await run.start(qb, this._team, this._opp, ball, true);
           break;
         case Position.C:
           let c : GamePlayer = this._team.get(role);
           let block = new RunBlock();
           block.name = c.player.jerseyNumber.toString() + " block";
           this.addMechanic(block);
-          await block.start(c, this._team, this._opp, ball);
+          await block.start(c, this._team, this._opp, ball, true);
           break;
         default:
           break;

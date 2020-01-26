@@ -19,7 +19,7 @@ export abstract class PlayerMechanic {
   private _timerHandle : number;
 
   async start(player : GamePlayer, team : Map<DepthRole, GamePlayer>, 
-    opp : Map<DepthRole, GamePlayer>, ball : Ball) {
+    opp : Map<DepthRole, GamePlayer>, ball : Ball, showCone = false) {
 
     if(!this._isRunning) {
       this._player = player;
@@ -27,6 +27,10 @@ export abstract class PlayerMechanic {
       this._opp = opp;
       this._ball = ball;
 
+      if(showCone) {
+        this._player.showVisionCone = true;
+        this.mechanicComplete.subscribe(() => this._player.showVisionCone = false);
+      }
       this.onStart();
 
       //Logger.log(`mechanic ${this.name} starting...`);
@@ -45,6 +49,11 @@ export abstract class PlayerMechanic {
 
   protected done(playOver : boolean) {
     this.mechanicComplete.trigger(new MechanicCompleteEventArgs(this, playOver));
+  }
+
+  private showCone() {
+    this._player.showVisionCone = true;
+    this.mechanicComplete.subscribe(() => this._player.showVisionCone = false);
   }
 
   private startMechanic() {

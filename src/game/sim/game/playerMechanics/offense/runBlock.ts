@@ -14,10 +14,7 @@ export class RunBlock extends PlayerMechanic {
     this.name = "RunBlock";
   }
 
-  protected async onStart() { 
-    this._player.showVisionCone = true;
-    this.mechanicComplete.subscribe(() => this._player.showVisionCone = false);
-  }
+  protected async onStart() { }
   
   onTick() { 
     this.setTarget(this.findBlockTarget());

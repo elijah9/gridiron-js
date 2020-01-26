@@ -5,4 +5,8 @@ export class DBTeam {
   nameLast : string;
   colorMain : string;
   colorSec : string;
+
+  toString() : string {
+    return `${this.teamID}: ${this.nameFirst} ${this.nameLast} (${this.nameShort})`;
+  }
 }
