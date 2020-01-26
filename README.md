@@ -1,7 +1,7 @@
 # gridiron-js
 mostly so I can learn web development but would be nice if this became real
 
-# test it out [here](https://elijah9.github.io/gridiron-js/html/index.html)
+# ~~test it out [here](https://elijah9.github.io/gridiron-js/html/index.html)~~ not working right now
 
 # current status
 * basic Angular framework and Svg.JS usage in place
@@ -25,7 +25,16 @@ mostly so I can learn web development but would be nice if this became real
 * get app working via Github.io again
 
 # data engine features
-* write scraper for team info rosters using Wikipedia parameterized by year
+## short term
+* scraper for team info rosters using Wikipedia parameterized by year
+* view/edit player info page
+* * form for info including attributes
+* scraper for player stats
+
+## soon
+* engine for generating player attributes from statistics
+
+## later on
 * create player page
 * * form for info
 * create team page
