@@ -1,16 +1,17 @@
 import { PlayerMechanic, MechanicCompleteEventArgs } from './playerMechanic';
 import { PlayerRun } from './playerRun';
+import { LoggerService } from '../../../../app/services/logger.service';
 
 export class PursueBall extends PlayerMechanic {
   private _run : PlayerRun;
 
-  constructor() {
-    super();
+  constructor(logger : LoggerService) {
+    super(logger);
     this.name = "PursueBall";
   }
 
   protected async onStart() {
-    this._run = new PlayerRun(this._ball);
+    this._run = new PlayerRun(this._logger, this._ball);
     this._run.name = "PursueBall->PlayerRun";
     this._run.mechanicComplete.subscribe((e? : MechanicCompleteEventArgs) => {
       e.mechanic.stop();

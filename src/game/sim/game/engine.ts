@@ -1,6 +1,7 @@
-import { Logger } from '../../util/logger';
+import { LoggerService } from '../../../app/services/logger.service';
 export class Engine {
   
+  private readonly _log : LoggerService;
   private _elapsed : number = 0;
   private _animationFrameRequest : number;
   private _time : number;
@@ -9,7 +10,8 @@ export class Engine {
   private _onTick : Function;
   private _render : Function;
 
-  constructor(dt : number, onTick : Function, render : Function) {
+  constructor(dt : number, onTick : Function, render : Function, logger : LoggerService) {
+    this._log = logger;
     this._dt = dt;
     this._onTick = onTick;
     this._render = render;
@@ -35,7 +37,7 @@ export class Engine {
 
     // roll back if 3 or more frames behind
     if(this._elapsed >= this._dt * 3) {
-      Logger.log("rolling back frames...");
+      this._log.log("rolling back frames...");
       this._elapsed = this._dt;
     }
 

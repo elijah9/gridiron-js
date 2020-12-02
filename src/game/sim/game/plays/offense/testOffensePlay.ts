@@ -5,10 +5,11 @@ import { PlayerRun } from '../../playerMechanics/playerRun';
 import { FieldPoint } from '../../iFieldPoint';
 import { Position } from 'src/game/sim/positionPlayer';
 import { RunBlock } from '../../playerMechanics/offense/runBlock';
+import { LoggerService } from '../../../../../app/services/logger.service';
 
 export class TestOffensePlay extends OffensePlay {
-  constructor() {
-    super();
+  constructor(logger : LoggerService) {
+    super(logger);
     this.initializeRole(Position.QB, 1, -1.5, 0, 0);
     this.initializeRole(Position.FB, 1, -5, 0, 0);
     this.initializeRole(Position.RB, 1, -10, 0, 0);
@@ -27,14 +28,14 @@ export class TestOffensePlay extends OffensePlay {
       switch(role.role) {
         case Position.QB:
           let qb : GamePlayer = this._team.get(role);
-          let run = new PlayerRun(new FieldPoint(100, qb.offset));
+          let run = new PlayerRun(this._logger, new FieldPoint(100, qb.offset));
           run.name = qb.player.jerseyNumber.toString() + " run";
           this.addMechanic(run);
           await run.start(qb, this._team, this._opp, ball, true);
           break;
         case Position.C:
           let c : GamePlayer = this._team.get(role);
-          let block = new RunBlock();
+          let block = new RunBlock(this._logger);
           block.name = c.player.jerseyNumber.toString() + " block";
           this.addMechanic(block);
           await block.start(c, this._team, this._opp, ball, true);

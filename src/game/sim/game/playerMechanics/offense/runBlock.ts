@@ -4,13 +4,14 @@ import { PlayerAttribute } from '../../../entities/player';
 import { GamePlayer } from '../../gamePlayer';
 import { VisionCone } from '../visionCone';
 import { IFieldPoint, FieldPoint } from '../../iFieldPoint';
+import { LoggerService } from '../../../../../app/services/logger.service';
 
 export class RunBlock extends PlayerMechanic {
   private _run : PlayerRun;
   private _target : IFieldPoint;
 
-  constructor() {
-    super();
+  constructor(logger : LoggerService) {
+    super(logger);
     this.name = "RunBlock";
   }
 
@@ -71,7 +72,7 @@ export class RunBlock extends PlayerMechanic {
         this._run.stop();
       }
 
-      this._run = new PlayerRun(this.findBlockTarget());
+      this._run = new PlayerRun(this._logger, this.findBlockTarget());
       this._run.name = "PursueBall->PlayerRun";
       this._run.mechanicComplete.subscribe((e? : MechanicCompleteEventArgs) => {
         e.mechanic.stop();

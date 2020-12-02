@@ -1,7 +1,10 @@
 import { IPlayer } from "./player";
+import { Conference, Division } from './league';
 
 export interface ITeam {
   readonly nameShort : string;
+  readonly nameFirst : string;
+  readonly nameLast : string;
   readonly activeRoster : IPlayer[];
   readonly colorMain : string;
   readonly colorSec : string;
@@ -9,31 +12,17 @@ export interface ITeam {
 
 export class Team implements ITeam {
   
-  private _nameShort : string;
-  get nameShort() : string {
-    return this._nameShort;
-  }
-  set nameShort(v : string) {
-    this._nameShort = v;
-  }
+  readonly nameShort : string;
+  readonly nameFirst : string;
+  readonly nameLast : string;
   
   readonly activeRoster : IPlayer[] = [];
   
-  private _colorMain : string;
-  get colorMain() : string {
-    return this._colorMain;
-  }
-  set colorMain(v : string) {
-    this._colorMain = v;
-  }
-  
-  private _colorSec : string;
-  get colorSec() : string {
-    return this._colorSec;
-  }
-  set colorSec(v : string) {
-    this._colorSec = v;
-  }
+  readonly colorMain : string;
+  readonly colorSec : string;
+
+  readonly conference : Conference;
+  readonly division : Division;
 
   constructor(nameShort : string, colorMain : string, colorSec : string) {
     this.nameShort = nameShort;

@@ -3,13 +3,13 @@ import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
 
 import { AppModule } from './app/app.module';
 import { environment } from './environments/environment';
-import { BaseRepository } from './data-access/BaseRepository';
+import { initDb } from './data-access/Database.service';
 
 if (environment.production) {
   enableProdMode();
 }
 
-BaseRepository.initDB();
+initDb();
 
 platformBrowserDynamic().bootstrapModule(AppModule)
   .catch(err => console.error(err));

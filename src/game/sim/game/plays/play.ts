@@ -5,17 +5,23 @@ import { GamePlayer } from '../gamePlayer';
 import { Ball } from '../ball';
 import { PlayerMechanic, MechanicCompleteEventArgs } from '../playerMechanics/playerMechanic';
 import { DepthRole as DepthRole, Position } from '../../positionPlayer';
+import { LoggerService } from '../../../../app/services/logger.service';
 
 export abstract class Play {
 
   readonly initialPositions = new Map<DepthRole, IDirectionalFieldPoint>();
 
+  protected readonly _logger : LoggerService;
   protected _team : Map<DepthRole, GamePlayer>;
   protected _opp : Map<DepthRole, GamePlayer>;
   private _activeMechanics : PlayerMechanic[];
   private _isRunning = false;
 
   readonly playOver = new LiteEvent<Play>();
+
+  protected constructor(logger : LoggerService) {
+    this._logger = logger;
+  }
   
   protected initializeRole(position : Position, posDepth : number, depth : number,
     offset : number, angle : number) : DepthRole {

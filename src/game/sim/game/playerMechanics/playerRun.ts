@@ -3,7 +3,7 @@ import { IFieldPoint } from '../iFieldPoint';
 import { MathUtils } from '../../../util/mathUtils';
 import { Vector2 } from '../../../util/vector';
 import { PlayerAttribute } from '../../entities/player';
-import { Logger } from '../../../util/logger';
+import { LoggerService } from '../../../../app/services/logger.service';
 
 export class PlayerRun extends PlayerMechanic {
 
@@ -22,8 +22,8 @@ export class PlayerRun extends PlayerMechanic {
 
   private _destination : IFieldPoint;
 
-  constructor(destination : IFieldPoint) {
-    super();
+  constructor(logger : LoggerService, destination : IFieldPoint) {
+    super(logger);
     this._destination = destination;
     this.name = "PlayerRun";
   }
@@ -40,7 +40,7 @@ export class PlayerRun extends PlayerMechanic {
     let dPosNorm : Vector2 = dPos.divide(distance);
     if(distance <= scaleFactor) {
       // destination already reached
-      Logger.log("destination reached " + this.name);
+      this._logger.log("destination reached " + this.name);
       this.done(false);
     }
 

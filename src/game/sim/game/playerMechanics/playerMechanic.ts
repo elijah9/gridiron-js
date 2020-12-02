@@ -2,6 +2,7 @@ import { LiteEvent } from 'src/game/util/iLiteEvent';
 import { GamePlayer } from '../gamePlayer';
 import { Ball } from '../ball';
 import { DepthRole } from '../../positionPlayer';
+import { LoggerService } from '../../../../app/services/logger.service';
 
 export abstract class PlayerMechanic {
   name : string; // optional but can be useful for debugging
@@ -11,12 +12,17 @@ export abstract class PlayerMechanic {
 
   readonly mechanicComplete = new LiteEvent<MechanicCompleteEventArgs>();
 
+  protected readonly _logger : LoggerService;
   protected _player : GamePlayer;
   protected _team : Map<DepthRole, GamePlayer>;
   protected _opp : Map<DepthRole, GamePlayer>;
   protected _ball : Ball;
   protected _isRunning = false;
   private _timerHandle : number;
+
+  protected constructor(logger : LoggerService) {
+    this._logger = logger;
+  }
 
   async start(player : GamePlayer, team : Map<DepthRole, GamePlayer>, 
     opp : Map<DepthRole, GamePlayer>, ball : Ball, showCone = false) {

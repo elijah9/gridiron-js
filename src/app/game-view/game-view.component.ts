@@ -7,9 +7,9 @@ import { GameTeam } from '../../game/sim/game/gameTeam';
 import { TestOffensePlay } from '../../game/sim/game/plays/offense/testOffensePlay';
 import { TestDefensePlay } from 'src/game/sim/game/plays/defense/testDefensePlay';
 import { FieldPointEventArgs, IFieldPoint } from '../../game/sim/game/iFieldPoint';
-import { Logger } from '../../game/util/logger';
 import { fieldLength, fieldWidth, fieldOffsetFromTop } from '../../game/sim/game/field';
 import { VisionCone } from '../../game/sim/game/playerMechanics/visionCone';
+import { LoggerService } from '../services/logger.service';
 
 @Component({
   selector: 'app-game-view',
@@ -58,15 +58,18 @@ export class GameViewComponent implements OnInit {
     }
   }
 
-  get debugLog() : string { return Logger.value; }
+  get debugLog() : string { return this._log.value; }
 
   private _scale;
   private _svg : Svg.Doc;
   private _players : Map<GamePlayer, Svg.G>;
   private _cones : Map<GamePlayer, Svg.PolyLine>;
   private _initialized = false;
+  private readonly _log : LoggerService;
   
-  constructor() { }
+  constructor(logger : LoggerService) { 
+    this._log = logger;
+  }
 
   ngOnInit() { 
     window.addEventListener("resize", () => this.setScale());
@@ -78,7 +81,7 @@ export class GameViewComponent implements OnInit {
     let w : number = document.getElementById("gameView2D").offsetWidth * scaleFactor;
     let h : number = document.getElementById("gameView2D").offsetHeight * scaleFactor;
     this._scale = w <= h ? w / fieldLength : h / fieldWidth;
-    Logger.log("scaling to " + this._scale);
+    this._log.log("scaling to " + this._scale);
     if(typeof(this._svg) !== "undefined") {
       this._svg.scale(this._scale, this._scale);
     }
@@ -88,7 +91,7 @@ export class GameViewComponent implements OnInit {
     this.game.setupDrive(25, true);
 
     this.driveActive = true;
-    Logger.log("drive initialized");
+    this._log.log("drive initialized");
   }
 
   setupTestPlay() {
@@ -98,10 +101,10 @@ export class GameViewComponent implements OnInit {
       this._initialized = true;
     }
 
-    this.game.setupPlay(new TestOffensePlay(), new TestDefensePlay());
+    this.game.setupPlay(new TestOffensePlay(this._log), new TestDefensePlay(this._log));
 
     this.playReady = true;
-    Logger.log("play initialized");
+    this._log.log("play initialized");
   }
 
   async runTestPlay() {
@@ -120,7 +123,7 @@ export class GameViewComponent implements OnInit {
 
     this.drawField();
 
-    Logger.log("game started");
+    this._log.log("game started");
   }
 
   private drawField() {

@@ -1,6 +1,7 @@
 import { PlayerMechanic, MechanicCompleteEventArgs } from '../playerMechanic';
 import { PursueBall } from '../pursueBall';
 import { PlayerAttribute } from 'src/game/sim/entities/player';
+import { LoggerService } from '../../../../../app/services/logger.service';
 
 export class TackleCarrier extends PlayerMechanic {
 
@@ -9,13 +10,13 @@ export class TackleCarrier extends PlayerMechanic {
   
   private _pursuit : PursueBall;
 
-  constructor() {
-    super();
+  constructor(logger : LoggerService) {
+    super(logger);
     this.name = "TackleCarrier";
   }
 
   protected async onStart() {
-    this._pursuit = new PursueBall();
+    this._pursuit = new PursueBall(this._logger);
     this._pursuit.mechanicComplete.subscribe((e? : MechanicCompleteEventArgs) => {
       e.mechanic.stop();
       let roll = TackleCarrier.BaseTackleProbability * Math.random() * this._player.player.attributes.get(PlayerAttribute.Tackle);

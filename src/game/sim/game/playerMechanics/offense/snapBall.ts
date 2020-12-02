@@ -1,9 +1,10 @@
 import { PlayerMechanic } from '../playerMechanic';
 import { Position } from 'src/game/sim/positionPlayer';
+import { LoggerService } from '../../../../../app/services/logger.service';
 
 export class SnapBall extends PlayerMechanic {
-  constructor() {
-    super();
+  constructor(logger : LoggerService) {
+    super(logger);
     this.name = "SnapBall";
   }
 

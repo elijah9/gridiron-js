@@ -1,8 +1,9 @@
 import { Component } from '@angular/core';
-import { TeamRepository } from '../data-access/TeamRepository';
-import { Logger } from 'src/game/util/logger';
 import { DBTeam } from 'src/data-access/model/DBTeam';
-import { BaseRepository } from '../data-access/BaseRepository';
+import { LoggerService } from './services/logger.service';
+import { DatabaseService } from '../data-access/Database.service';
+import { TeamRepositoryService } from '../data-access/TeamRepository.service';
+import { TeamScraperService } from '../scraping/TeamScraper.service';
 
 @Component({
   selector: 'app-root',
@@ -13,6 +14,20 @@ export class AppComponent {
   title = 'gridiron-ng';
   hideGame = true;
 
+  private readonly _log : LoggerService;
+  private readonly _db : DatabaseService;
+  private readonly _teamRepository : TeamRepositoryService;
+  private readonly _teamScraper : TeamScraperService;
+
+  constructor(logger : LoggerService, db : DatabaseService, 
+    teamRepository : TeamRepositoryService, teamScraper : TeamScraperService) {
+
+    this._log = logger;
+    this._db = db;
+    this._teamRepository = teamRepository;
+    this._teamScraper = teamScraper;
+  }
+
   newGame() {
     if(this.hideGame) {
       this.hideGame = false;
@@ -20,21 +35,23 @@ export class AppComponent {
   }
 
   async resetDB() {
-    await BaseRepository.resetDB();
+    await this._db.resetDB();
   }
 
-  async addTeam() {
-    let team = new DBTeam();
-    team.nameFirst = "test first name";
-    team.nameLast = "team last name";
-    team.nameShort = "TEST";
-    team.colorMain = "rgb(0,0,0)";
-    team.colorSec = "rgb(255,255,255)";
-    await TeamRepository.addTeam(team);
+  async scrapeTeams() {
+    this._teamScraper.scrapeLeague();
+
+    // let team = new DBTeam();
+    // team.nameFirst = "test first name";
+    // team.nameLast = "team last name";
+    // team.nameShort = "TEST";
+    // team.colorMain = "rgb(0,0,0)";
+    // team.colorSec = "rgb(255,255,255)";
+    // await TeamRepository.addTeam(team);
   }
 
   async getTeams() {
-    let allTeams : DBTeam[] = await TeamRepository.getAllTeams();
-    allTeams.forEach((team) => Logger.log(team.toString()));
+    let allTeams : DBTeam[] = await this._teamRepository.getAllTeams();
+    allTeams.forEach((team) => this._log.log(team.toString()));
   }
 }

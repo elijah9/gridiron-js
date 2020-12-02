@@ -4,7 +4,6 @@ import { MathUtils, lusolve } from '../../../util/mathUtils';
 import { fieldYardsMin, fieldYardsMax, fieldOffsetMin, fieldOffsetMax } from '../field';
 import { IFieldPoint, FieldPoint } from '../iFieldPoint';
 import { Vector2 } from 'src/game/util/vector';
-import { Logger } from '../../../util/logger';
 
 export class VisionCone {
 
